@@ -1,0 +1,25 @@
+#!/bin/bash
+# upload to sprunge.us
+
+usage() {
+	echo "Usage: sprunge [files]
+
+    Upload files or stdin to http://sprunge.us/
+"
+}
+
+case "$1" in "--help"|"-h")
+	usage
+	exit
+esac
+
+if [ $# = 0 ]
+then
+	curl -F 'sprunge=<-' http://sprunge.us/
+else
+	for i in "$@"
+	do
+		curl -F 'sprunge=<-' http://sprunge.us/ <"$i"
+	done
+fi
+

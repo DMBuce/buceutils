@@ -1,0 +1,23 @@
+#!/bin/bash
+# supplies command with random arg chosen from args
+
+CMD="$1"
+shift
+
+usage() {
+	echo "Usage: $(basename $0) <command> <args>
+
+    Supplies <command> with random arg chosen from <args>.
+"
+}
+
+if [ "$#" != 1 ]; then
+	usage
+	exit
+fi
+
+n=$(($RANDOM % $#))
+shift $n
+
+$CMD "$1"
+

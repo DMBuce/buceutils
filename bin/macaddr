@@ -1,0 +1,19 @@
+#!/bin/bash
+# generate a mac address randomly or from a hostname
+
+FQDN="${1-$RANDOM}"
+
+case "$1" in
+  "--help"|"-h")
+	echo "Usage: $(basename $0) [hostname]
+
+    Generate a mac address randomly or from <hostname>
+"
+  ;;
+  *)
+	echo $FQDN | md5sum | \
+		sed -r 's/^(..)(..)(..)(..)(..).*$/\U02:\1:\2:\3:\4:\5/'
+  ;;
+esac
+
+

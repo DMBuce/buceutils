@@ -1,0 +1,29 @@
+#!/bin/bash
+# Print differences between local and remote file or command
+#
+# Usage: sshdiff [user@]host /full/path/to/file
+#        sshdiff [user@]host command
+
+HOST="$1"
+shift
+
+usage() {
+	echo "Usage: sshdiff [user@]host <file|command>
+
+    Print differences between local and remote file or command
+"
+}
+
+case "$1" in ""|"-h"|"--help")
+	usage
+	exit
+esac
+
+if [ $# = 1 ] && [ "${1:0:1}" = '/' ]; then
+	# diff a file
+	ssh $HOST "cat $1" | diff - "$1"
+else
+	# diff the output of a command
+	ssh $HOST "$*" | diff - "$("$@")"
+fi
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+# takes screenshot of current window
+
+winscrot() {
+	if [ $# = 0 ]
+	then
+		NOW=$(date +%Y-%m-%d-%H%M%S)
+		RES=$(xrandr | grep '*' | awk '{print $1}')
+		set ${NOW}_${RES}_scrot.png
+	fi
+	
+	import -frame -window $(xprop _NET_ACTIVE_WINDOW -root | cut -d' ' -f5) "$@"
+}
+
+usage() {
+	echo "Usage: $(basename $0) [file]
+
+    Take a screenshot of the current window.
+"
+}
+
+case "$1" in
+  "-h"|"--help") usage ;;
+  *)             winscrot "$@" ;;
+esac
+

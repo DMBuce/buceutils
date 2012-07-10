@@ -1,0 +1,63 @@
+#!/bin/bash
+# extract an archive based on file extension
+#
+# adapted from https://wiki.archlinux.org/index.php/Bash#Functions
+
+retval=0
+PROG="$(basename "$0")"
+
+extensions() {
+	sed -rn '/\*\..*\)/ {
+		s/^[^*]*\*\.|\).*$//g
+		s/\|(\*\.)/\n/
+		p
+	}' $0
+}
+
+usage() {
+	echo "Usage: $PROG file1 [ file2 ... ]
+
+    Extract an archive.
+
+    Supports $(echo $(extensions))
+"
+}
+
+case "$1" in ""|"-h"|"--help")
+	usage
+	exit
+esac
+
+for file in "$@"
+do
+	if [ -f "$file" ]
+	then
+		case "$file" in
+		  *.tar.bz2|*.tbz2)
+		         tar xvjf   "$file" ;;
+		  *.tar.gz|*.tgz)
+		         tar xvzf   "$file" ;;
+		  *.tar.xz|*.txz)
+		         tar xvJf   "$file" ;;
+		  *.tar) tar xvf    "$file" ;;
+		  *.7z)  7z x       "$file" ;;
+		  *.Z)   uncompress "$file" ;;
+		  *.bz2) bunzip2    "$file" ;;
+		  *.exe) cabextract "$file" ;;
+		  *.gz)  gunzip     "$file" ;;
+		  *.rar) unrar x    "$file" ;;
+		  *.xz)  unxz       "$file" ;;
+		  *.zip) unzip      "$file" ;;
+		  *.jar) jar xvf    "$file" ;;
+		  *.rpm) rpm2cpio   "$file" | cpio -idmv ;;
+		  *)     echo "$PROG: $file: unknown extension" >&2
+		         retval=1 ;;
+		esac
+	else
+	    echo "$PROG: $file: file not found" >&2
+	    retval=2
+	fi
+done
+
+exit $retval
+
