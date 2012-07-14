@@ -1,0 +1,40 @@
+buceutils README
+================
+
+A collection of simple command line utilities.
+
+Requirements
+------------
+
+Each script in bin/ can be installed separately,
+and therefore have separate requirements detailed below.
+They all require GNU coreutils.
+
+* extract: tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
+* pacpatch: vimdiff
+* sprunge: curl
+* sshdiff: openssh, diffutils
+* vol: alsa-utils
+* wscrot: xorg-xrandr, awk, imagemagick
+
+Installation
+------------
+
+To install, edit the variables at the top of the Makefile to match your system
+and run
+
+	make install
+
+The Makefile also supports DESTDIR for staged installs.
+
+	make DESTDIR=/tmp/staging install
+
+Usage
+-----
+
+Refer to the `--help` output for each utility.
+
+
+/////
+vim: set syntax=asciidoc ts=4 sw=4 noet:
+/////
