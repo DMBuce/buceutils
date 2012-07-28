@@ -57,11 +57,13 @@ INSTALL_DIRS     = $(DESTDIR)$(bindir) $(DESTDIR)$(sysconfdir)/bashrc.d
 all:
 
 .PHONY: install
-install: all install-dirs $(INSTALL_FILES)
+install: all installdirs $(INSTALL_FILES)
 
-.PHONY: install-dirs
-install-dirs:
-	mkdir -p $(INSTALL_DIRS)
+.PHONY: installdirs
+installdirs: $(INSTALL_DIRS)
+
+$(INSTALL_DIRS):
+	$(INSTALL) -d $@
 
 $(DESTDIR)$(bindir)/%: bin/%
 	$(INSTALL_PROGRAM) $< $@
