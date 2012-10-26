@@ -13,7 +13,11 @@ case "$TERM" in
   ;;
 esac
 
-alias ls='ls --color=auto'
+case "$(uname -r)" in
+  Darwin) alias ls='ls -G' ;;
+  *)      alias ls='ls --color=auto' ;;
+esac
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
