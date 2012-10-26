@@ -13,7 +13,7 @@ case "$TERM" in
   ;;
 esac
 
-case "$(uname -r)" in
+case "$(uname -s)" in
   Darwin) alias ls='ls -G' ;;
   *)      alias ls='ls --color=auto' ;;
 esac
