@@ -6,7 +6,7 @@ export HISTCONTROL="ignoreboth"
 
 for DIR in /usr/kerberos/sbin /sbin /usr/sbin /usr/local/sbin
 do
-	if ! echo $PATH | /bin/egrep -q "(^|:)$DIR($|:)" ; then
+	if ! echo $PATH | egrep -q "(^|:)$DIR($|:)" ; then
 		PATH=$PATH:$DIR
 	fi
 done

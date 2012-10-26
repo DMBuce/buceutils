@@ -21,7 +21,9 @@ alias egrep='egrep --color=auto'
 which colordiff &>/dev/null && alias diff='colordiff'
 alias less='less -r'
 
-eval "`dircolors -b`"
+if which dircolors &>/dev/null; then
+	eval "`dircolors -b`"
+fi
 
 ME='\u'
 HOST='\h'
