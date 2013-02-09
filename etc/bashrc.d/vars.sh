@@ -4,11 +4,9 @@ export HISTCONTROL="ignoreboth"
 
 [ "$PS1" == '[\u@\h \W]\$ ' ] && export PS1='\u@\h:\W\$ '
 
-for DIR in /usr/kerberos/sbin /sbin /usr/sbin /usr/local/sbin
+for DIR in /usr/kerberos/sbin /sbin /usr/sbin /usr/local/sbin ~/bin
 do
-	if ! echo $PATH | egrep -q "(^|:)$DIR($|:)" ; then
-		PATH=$PATH:$DIR
-	fi
+	pathmunge "$DIR"
 done
 export PATH
 
