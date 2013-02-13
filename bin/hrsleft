@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import sys
+import datetime
+
+prog = "hrsleft"
+
+if len(sys.argv) == 1 or sys.argv[1] in ("--help", "-h"):
+    print("Usage: " + prog + " <time>")
+    sys.exit(0)
+
+try:
+    hrs = float(sys.argv[1])
+except ValueError as e:
+    sys.stderr.write("Invalid float: " + sys.argv[1] + "\n")
+    sys.exit(1)
+
+tot = 40 * (hrs//40 + 1)
+hrsleft = tot-hrs
+
+hours = int(hrsleft//1)
+minutes = int((hrsleft%1)*60)
+
+print( "%d:%02d:00" % (hours, minutes) )
+
