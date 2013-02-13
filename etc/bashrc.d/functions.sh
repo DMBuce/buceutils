@@ -3,9 +3,9 @@
 pathmunge () {
 	local dir="$1"
 
-	if [ -d "$dir" ] && \
+	if [[ -d "$dir" ]] && \
 	   ! echo "$PATH" | egrep -q "(^|:)$dir($|:)"; then
-		if [ "$2" = "before" ]; then
+		if [[ "$2" == "before" ]]; then
 			PATH="$dir:$PATH"
 		else
 			PATH="$PATH:$dir"

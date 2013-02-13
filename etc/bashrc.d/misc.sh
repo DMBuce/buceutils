@@ -10,7 +10,7 @@ alias xp="xprop | egrep 'WM_WINDOW_ROLE|WM_CLASS|^WM_NAME'"
 #alias untar='tar -xvf'
 
 # tell me my fortune on non-login shells
-if [ "${0::1}" = "-" ]
+if [[ "${0::1}" == "-" ]]
 then
 	which fortune &>/dev/null && fortune -as
 fi
@@ -18,11 +18,11 @@ fi
 ## bash completion rules
 #complete -c man
 #complete -cf sudo
-#if [ -f /etc/bash_completion ]
+#if [[ -f /etc/bash_completion ]]
 #then
 #    source /etc/bash_completion
 #else
-#    [ -d /etc/bash_completion.d ] && \
+#    [[ -d /etc/bash_completion.d ]] && \
 #    for file in /etc/bash_completion.d/*
 #    do
 #        source $file

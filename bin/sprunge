@@ -13,7 +13,7 @@ case "$1" in "--help"|"-h")
 	exit
 esac
 
-if [ $# = 0 ]
+if [[ $# == 0 ]]
 then
 	curl -F 'sprunge=<-' http://sprunge.us/
 else

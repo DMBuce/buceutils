@@ -22,9 +22,9 @@ case "$1" in ""|"-h"|"--help")
 	exit
 esac
 
-[ -f "$FILE.pacnew" ] || die "$FILE.pacnew does not exist"
+[[ -f "$FILE.pacnew" ]] || die "$FILE.pacnew does not exist"
 
-if [ ! -f "$FILE.orig" ]
+if [[ ! -f "$FILE.orig" ]]
 then
 	echo "$FILE.orig does not exist, falling back to vimdiff"
 	sleep 1
@@ -33,7 +33,7 @@ then
 	exit $?
 fi
 
-[ -f "$FILE.patch" ] && die "$FILE.patch exists, not overwriting"
+[[ -f "$FILE.patch" ]] && die "$FILE.patch exists, not overwriting"
 if diff -u "$FILE".{orig,pacnew} > "$FILE.patch"
 then
 	rm "$FILE.patch"

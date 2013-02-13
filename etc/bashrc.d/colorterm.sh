@@ -38,7 +38,7 @@ SAD_COLOR='\[\e[0\;36m\]'
 END_COLOR='\[\e[0m\]'
 #FACE="\`if [ \$? = 0 ]; then echo ${HAPPY_COLOR}\^_\^${END_COLOR}; else echo ${SAD_COLOR}T_T${END_COLOR}; fi\`"
 FACE="\`[ \$? = 0 ] && echo ${HAPPY_COLOR}\^_\^${END_COLOR} || echo ${SAD_COLOR}T_T${END_COLOR}\`"
-if [ "`whoami`" == "root" ]
+if [[ "`whoami`" == "root" ]]
 then
 	export PS1='\[\e[1;31m\]\u@\h\[\e[0m\]:\W\$ '
 else

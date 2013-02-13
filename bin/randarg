@@ -11,7 +11,7 @@ usage() {
 "
 }
 
-if [ "$#" = 0 ]; then
+if [[ "$#" == 0 ]]; then
 	usage
 	exit
 fi

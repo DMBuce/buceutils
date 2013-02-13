@@ -2,7 +2,7 @@
 # takes screenshot of current window
 
 winscrot() {
-	if [ $# = 0 ]
+	if [[ $# == 0 ]]
 	then
 		NOW=$(date +%Y-%m-%d-%H%M%S)
 		RES=$(xrandr | grep '*' | awk '{print $1}')
