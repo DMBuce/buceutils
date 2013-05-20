@@ -11,11 +11,6 @@ alias halt='poweroff'
 #alias tarball='tar -cvf -'
 #alias untar='tar -xvf'
 
-# tell me my fortune on non-login shells
-if [[ "${0::1}" == "-" ]]
-then
-	which fortune &>/dev/null && fortune -as
-fi
 # limit the max number of processes
 # prevents inadvertent fork bombs
 ulimit -u 256
