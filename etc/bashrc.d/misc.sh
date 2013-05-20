@@ -3,6 +3,8 @@ alias screen='screen -d -RR'
 alias x='startx'
 alias hd='od -Ax -tx1z -v'
 alias xp="xprop | egrep 'WM_WINDOW_ROLE|WM_CLASS|^WM_NAME'"
+alias xcolors='grabc'
+alias halt='poweroff'
 #alias dum='du -m | sort -n'
 #alias duh='du -h'
 #alias collate='paste -d " "'
@@ -14,6 +16,9 @@ if [[ "${0::1}" == "-" ]]
 then
 	which fortune &>/dev/null && fortune -as
 fi
+# limit the max number of processes
+# prevents inadvertent fork bombs
+ulimit -u 256
 
 ## bash completion rules
 #complete -c man
