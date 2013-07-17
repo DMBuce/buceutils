@@ -21,9 +21,9 @@ esac
 
 if [[ $# == 1 ]] && [[ "${1:0:1}" == '/' ]]; then
 	# diff a file
-	ssh $HOST "cat $1" | diff - "$1"
+	ssh $HOST "cat $1" | diff -u - "$1"
 else
 	# diff the output of a command
-	ssh $HOST "$*" | diff - <("$@")
+	ssh $HOST "$*" | diff -u - <("$@")
 fi
 
