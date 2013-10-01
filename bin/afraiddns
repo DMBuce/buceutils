@@ -1,0 +1,45 @@
+#!/bin/bash
+# updates dns on afraid.org
+
+CONF="$1"
+
+die() {
+	echo "$1" >&2
+	exit 1
+}
+
+# parse args
+if [[ $# != 1 ]]; then
+	die "Usage: $(basename $0) <file>
+
+    Update dns on afraid.org using <file> as a config.
+"
+elif [[ ! -r "$CONF" ]]; then
+	die "Could not read file: $CONF"
+else
+	. "$CONF"
+fi
+
+# validate CONF
+if [[ -z "${ipaddr+x}" ]]; then
+	die "Parameter 'ipaddr' not set"
+elif [[ ! "$key" =~ ^[a-zA-Z0-9]{36}$ ]]; then
+	die "Parameter 'key' not set or invalid: $key"
+fi
+
+OLDIP="$ipaddr"
+KEY="$key"
+NEWIP=$(curl -s http://ifconfig.me)
+#NEWIP=$(curl -s http://whatismyip.org)
+#NEWIP=$(curl -s http://icanhazip.com)
+#NEWIP=$(curl -s http://ip.appspot.com/)
+#NEWIP=$(curl -s http://ip.dnsexit.com/)
+#NEWIP=$(curl -s http://tnx.nl/ip)
+
+if [[ "$NEWIP" != "$OLDIP" && "$NEWIP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+  && curl -s "https://freedns.afraid.org/dynamic/update.php?$KEY" >/dev/null
+then
+	sed -i "/^ipaddr=/ s|.*|ipaddr='$NEWIP'|" "$CONF"
+	echo "IP address changed to $NEWIP"
+fi
+
