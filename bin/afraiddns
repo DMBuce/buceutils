@@ -29,12 +29,13 @@ fi
 
 OLDIP="$ipaddr"
 KEY="$key"
-NEWIP=$(curl -s http://ifconfig.me)
+NEWIP=$(curl -s http://ip.dnsexit.com/)
+#NEWIP=$(curl -s http://ifconfig.me)
 #NEWIP=$(curl -s http://whatismyip.org)
 #NEWIP=$(curl -s http://icanhazip.com)
 #NEWIP=$(curl -s http://ip.appspot.com/)
-#NEWIP=$(curl -s http://ip.dnsexit.com/)
 #NEWIP=$(curl -s http://tnx.nl/ip)
+#NEWIP=$(curl -s http://ident.me)
 
 if [[ "$NEWIP" != "$OLDIP" && "$NEWIP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
   && curl -s "https://freedns.afraid.org/dynamic/update.php?$KEY" >/dev/null
