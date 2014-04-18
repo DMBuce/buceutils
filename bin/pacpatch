@@ -24,8 +24,7 @@ esac
 
 [[ -f "$FILE.pacnew" ]] || die "$FILE.pacnew does not exist"
 
-if [[ ! -f "$FILE.orig" ]]
-then
+if [[ ! -f "$FILE.orig" ]]; then
 	echo "$FILE.orig does not exist, falling back to vimdiff"
 	sleep 1
 	vimdiff "$FILE"{,.pacnew}
@@ -34,16 +33,14 @@ then
 fi
 
 [[ -f "$FILE.patch" ]] && die "$FILE.patch exists, not overwriting"
-if diff -u "$FILE".{orig,pacnew} > "$FILE.patch"
-then
+if diff -u "$FILE".{orig,pacnew} > "$FILE.patch"; then
 	rm "$FILE.patch"
 	die "$FILE.pacnew and $FILE.orig are identical"
 fi
 
 sed -i "s|$FILE.pacnew|$FILE|" "$FILE.patch"
 
-if patch -p0 < "$FILE.patch"
-then
+if patch -p0 < "$FILE.patch"; then
 	echo "Patch successful, cleaning up"
 	mv -v "$FILE.pacnew" "$FILE.orig"
 	rm -v "$FILE.patch"

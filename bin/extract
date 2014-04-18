@@ -30,8 +30,7 @@ esac
 
 for file in "$@"
 do
-	if [[ -f "$file" ]]
-	then
+	if [[ -f "$file" ]]; then
 		case "$file" in
 		  *.tar.bz2|*.tbz2)
 		         tar xvjf   "$file" ;;

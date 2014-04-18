@@ -38,7 +38,7 @@ NEWIP=$(curl -s http://ip.dnsexit.com/)
 #NEWIP=$(curl -s http://ident.me)
 
 if [[ "$NEWIP" != "$OLDIP" && "$NEWIP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
-  && curl -s "https://freedns.afraid.org/dynamic/update.php?$KEY" >/dev/null
+	&& curl -s "https://freedns.afraid.org/dynamic/update.php?$KEY" >/dev/null
 then
 	sed -i "/^ipaddr=/ s|.*|ipaddr='$NEWIP'|" "$CONF"
 	echo "IP address changed to $NEWIP"

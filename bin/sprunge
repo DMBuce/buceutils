@@ -13,13 +13,12 @@ case "$1" in "--help"|"-h")
 	exit
 esac
 
-if [[ $# == 0 ]]
-then
-	curl -F 'sprunge=<-' http://sprunge.us/
-else
+if (( $# )); then
 	for i in "$@"
 	do
 		curl -F 'sprunge=<-' http://sprunge.us/ <"$i"
 	done
+else
+	curl -F 'sprunge=<-' http://sprunge.us/
 fi
 
