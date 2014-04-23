@@ -13,7 +13,6 @@ They all require GNU coreutils.
 * afraiddns: curl
 * extract: tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
 * hrsleft: python
-* macaddr: none
 * randarg: none
 * sprunge: curl
 * sshdiff: openssh, diffutils
