@@ -11,6 +11,7 @@ and therefore have separate requirements detailed below.
 They all require GNU coreutils.
 
 * afraiddns: curl
+* diceware: python
 * extract: tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
 * hrsleft: python
 * randarg: none

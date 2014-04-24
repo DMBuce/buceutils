@@ -1,0 +1,102 @@
+#!/usr/bin/python
+# create a diceware password using a custom word list
+
+from __future__ import print_function
+import sys
+import os
+
+USAGE = """\
+Usage: diceware [-f file] [number] [number2] ...
+
+    Generates a diceware password from the word list in <file> and the dice
+    rolls given by one or more <number>s.
+
+    If <file> is not given, diceware looks for its word list in the files
+    $XDG_CONFIG_HOME/diceware/words and ~/.config/diceware/words. If those
+    files do not exists or if <file> is -, diceware reads the word list from
+    stdin.
+"""
+
+def err(*args):
+    print( args[0] % args[1:] , file=sys.stderr)
+
+def msg(*args):
+    print( args[0] % args[1:] )
+
+def usage(f=sys.stdout):
+    print(USAGE, file=f)
+
+def main():
+    numberlist = []
+    filename = None
+    skipargs = 0
+    for i, arg in enumerate(sys.argv[1:]):
+        number = roll2dec(arg)
+        if skipargs:
+            skipargs -= 1
+        elif arg == "-f":
+            filename = sys.argv[i+2]
+            skipargs = 1
+        elif number is not None:
+            numberlist.append(number)
+        elif arg == "--help" or arg == "-h":
+            usage()
+            return 0
+        else:
+            err("Invalid argument: %s", arg)
+            usage(sys.stderr)
+            return 1
+
+    return diceware(normalizefilename(filename), numberlist)
+
+def roll2dec(numstr):
+    ans = 0
+    for c in numstr:
+        if c not in '123456':
+            return None
+
+        ans *= 6
+        ans += int(c) - 1
+
+    return ans
+
+def normalizefilename(filename):
+    if filename is None:
+        defaultxdgconfighome = os.path.join(os.environ['HOME'], ".config")
+        xdgconfighome = os.getenv('XDG_CONFIG_HOME', defaultxdgconfighome)
+        xdgconfig = os.path.join(xdgconfighome, "diceware", "words")
+        if os.path.isfile(xdgconfig):
+            return xdgconfig
+        else:
+            return "-"
+    else:
+        return filename
+
+def diceware(filename, numberlist):
+    pwlist = ["" for n in numberlist]
+    try:
+        with open(filename, 'r') if filename != "-" else sys.stdin as f:
+            for linenumber, line in enumerate(f):
+                for i, number in enumerate(numberlist):
+                    if linenumber == number:
+                        pwlist[i] = line.strip()
+
+                if "" not in pwlist:
+                    break
+
+    except IOError as e:
+        filename = filename if filename != "-" else "stdin"
+        err("Error opening file: %s: %s", filename, e.strerror)
+        return 1
+
+    if "" in pwlist:
+        filename = filename if filename != "-" else "stdin"
+        err("Not enough words in file: %s", filename)
+        return 1
+    else:
+        msg("%s", ' '.join(pwlist))
+        return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+
