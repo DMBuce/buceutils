@@ -6,7 +6,7 @@ import sys
 import os
 
 USAGE = """\
-Usage: diceware [-f file] [number] [number2] ...
+Usage: diceware [-f file] <number> [number2] ...
 
     Generates a diceware password from the word list in <file> and the dice
     rolls given by one or more <number>s.
@@ -46,6 +46,10 @@ def main():
             err("Invalid argument: %s", arg)
             usage(sys.stderr)
             return 1
+
+    if len(numberlist) == 0:
+        usage()
+        return 0
 
     return diceware(normalizefilename(filename), numberlist)
 
