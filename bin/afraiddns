@@ -9,12 +9,18 @@ die() {
 }
 
 # parse args
-if [[ $# != 1 ]]; then
-	die "Usage: $(basename $0) <file>
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+	die "Usage: $(basename $0) [file]
 
-    Update dns on afraid.org using <file> as a config.
+    Update dns on afraid.org using <file> as a config. If no <file> is given,
+    \$XDG_CONFIG_HOME/afraiddns.conf or ~/.config/afraiddns.conf is used.
 "
-elif [[ ! -r "$CONF" ]]; then
+elif [[ -z "$CONF" ]]; then
+	CONF="${XDG_CONFIG_HOME-$HOME/.config/afraiddns.conf}"
+fi
+
+# read config
+if [[ ! -r "$CONF" ]]; then
 	die "Could not read file: $CONF"
 else
 	. "$CONF"
