@@ -17,6 +17,7 @@ They all require GNU coreutils.
 * randarg: none
 * sprunge: curl
 * sshdiff: openssh, diffutils
+* uniqaddr: perl, Net::CIDR::Lite
 * vol: alsa-utils
 * wscrot: xorg-xrandr, awk, imagemagick
 
