@@ -35,5 +35,5 @@ while (<>) {
 	}
 }
 
-print join("\n", $cidr->list);
+print join("\n", $cidr->list), "\n";
 
