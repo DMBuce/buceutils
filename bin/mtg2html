@@ -1,0 +1,86 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+
+# global variables
+my $urlfmt = "http://gatherer.wizards.com/pages/card/details.aspx?name=%2\$s";
+my $format = "html";
+my %formats = (
+	html     => "<a href=\"$urlfmt\">%1\$s</a>", # html link
+	markdown => "[%s]($urlfmt)",                 # markdown link
+	text     => "%s",                            # plain text
+	url      => $urlfmt,                         # url link
+	wiki     => "[$urlfmt %1\$s]",               # wiki link
+);
+my $help;
+my $usage = <<'EOF';
+Usage: mtg2html [options] [file] [file2] ...
+
+    Convert [[card]]-like syntax for Magic: The Gathering cards to another
+    format.
+
+    Options:
+
+        -f, --format=<format>   The output format. This can be an arbitrary
+                                format string suitable for printf(), or one of
+                                the special values "html", "markdown", "text",
+                                "url", or "wiki". The default is "html"
+        --help                  Print this help text and exit
+
+EOF
+
+# print usage
+sub usage {
+	print STDERR $usage;
+}
+
+# parse options
+if (
+	!GetOptions(
+		"format|f=s" => \$format,
+		"help"       => \$help
+	) || $help
+) {
+	usage();
+	exit(1);
+}
+
+# set format
+if ($formats{ $format }) {
+	$format = $formats{ $format };
+}
+
+# TODO: fix this
+if ($format =~ /(\[\[([^]]*)\]\])/) {
+	print STDERR ("FIXME: Format causes infinite loop due to bug: $format\n");
+	exit(1);
+}
+
+# iterate through files/stdin
+while (<>) {
+	# iterate through things that match "[[*]]"
+	while ($_ =~ /(\[\[([^]]*)\]\])/g) {
+		# extract matching groups
+		my $pattern = $1;
+		my $card = $2;
+
+		# html-escaped version of card
+		my $esccard = $card;
+		$esccard =~ s/ /%20/g;
+
+		# escape regex chars in pattern
+		$pattern = quotemeta $pattern;
+		my $replace = sprintf($format, $card, $esccard);
+
+		if ($card eq $esccard) {
+			$_ =~ s/$pattern/$replace/g;
+		} else {
+			$_ =~ s/$pattern/$replace/g;
+		}
+	}
+	print $_;
+}
+

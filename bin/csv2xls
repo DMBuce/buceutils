@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Spreadsheet::WriteExcel;
+use Getopt::Long;
+use FileHandle;
+
+# global variables
+my $delim = ',';
+my $outfile = "output.xls";
+my $help;
+my $usage = <<'EOF';
+Usage: csv2xls [options] [tab=]file [[tab2=]file2] ...
+
+    Convert one or more files to an Excel workbook. Each <file> is added to
+    the workbook as a separate worksheet named <tab> (if given) or <file>.
+
+    Options:
+
+        -d, --delim=<char>    The field delimiter. Default is ','
+        -o, --output=<file>   The filename of the workbook to create. Default
+                              is "output.xls"
+        --help                Print this help text and exit
+
+EOF
+
+# print formatted message to stderr
+sub err {
+	my $message = $_[0];
+	shift @_;
+	printf STDERR ("$message\n", @_);
+}
+
+# print usage
+sub usage {
+	err($usage);
+}
+
+# parse options
+if (
+	!GetOptions(
+		"delim|d=s"  => \$delim,
+		"output|o=s" => \$outfile,
+		"help"	     => \$help
+	) || $help
+) {
+	usage();
+	exit(1);
+}
+
+# set up workbook
+my $workbook = Spreadsheet::WriteExcel->new($outfile);
+
+# iterate through args
+foreach my $arg (@ARGV) {
+	# figure out tab name
+	my @arr = split("=", $arg);
+	my $tab = $arr[0];
+	shift @arr;
+
+	# figure out filename
+	my $file;
+	if (@arr) {
+		$file = join("=", @arr);
+	} else {
+		$file = $tab;
+	}
+
+	# get handle to file
+	my $fh = FileHandle->new;
+	if (!$fh->open("< $file")) {
+		err("Could not open file: %s", $file);
+		exit 1;
+	}
+
+	# parse csv and write it to worksheet
+	my $worksheet = $workbook->add_worksheet($tab);
+	for (my $i = 0; my $line = <$fh>; $i++) {
+		my @fields = split($delim, $line);
+		for my $j (0..$#fields) {
+			$worksheet->write($i, $j, $fields[$j]);
+		}
+	}
+}
+

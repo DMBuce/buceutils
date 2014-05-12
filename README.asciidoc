@@ -11,9 +11,11 @@ and therefore have separate requirements detailed below.
 They all require GNU coreutils.
 
 * afraiddns: curl
+* csv2xls: perl, Spreadsheet::WriteExcel
 * diceware: python
 * extract: tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
 * hrsleft: python
+* mtg2html: perl
 * randarg: none
 * sprunge: curl
 * sshdiff: openssh, diffutils
