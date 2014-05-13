@@ -75,11 +75,7 @@ while (<>) {
 		$pattern = quotemeta $pattern;
 		my $replace = sprintf($format, $card, $esccard);
 
-		if ($card eq $esccard) {
-			$_ =~ s/$pattern/$replace/g;
-		} else {
-			$_ =~ s/$pattern/$replace/g;
-		}
+		$_ =~ s/$pattern/$replace/g;
 	}
 	print $_;
 }
