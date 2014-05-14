@@ -53,15 +53,10 @@ if ($formats{ $format }) {
 	$format = $formats{ $format };
 }
 
-# TODO: fix this
-if ($format =~ /(\[\[([^]]*)\]\])/) {
-	print STDERR ("FIXME: Format causes infinite loop due to bug: $format\n");
-	exit(1);
-}
-
 # iterate through files/stdin
 while (<>) {
 	# iterate through things that match "[[*]]"
+	my $line = $_;
 	while ($_ =~ /(\[\[([^]]*)\]\])/g) {
 		# extract matching groups
 		my $pattern = $1;
@@ -75,8 +70,8 @@ while (<>) {
 		$pattern = quotemeta $pattern;
 		my $replace = sprintf($format, $card, $esccard);
 
-		$_ =~ s/$pattern/$replace/g;
+		$line =~ s/$pattern/$replace/g;
 	}
-	print $_;
+	print $line;
 }
 
