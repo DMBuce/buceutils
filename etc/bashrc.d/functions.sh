@@ -3,8 +3,7 @@
 pathmunge () {
 	local dir="$1"
 
-	if [[ -d "$dir" ]] && \
-	   ! echo "$PATH" | egrep -q "(^|:)$dir($|:)"; then
+	if [[ -d "$dir" && ! "$PATH" =~ (^|:)"$dir"(:|$) ]] \
 		if [[ "$2" == "before" ]]; then
 			PATH="$dir:$PATH"
 		else

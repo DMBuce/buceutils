@@ -14,7 +14,7 @@ alias mv='mv -iv'
 alias -- --='exit'
 
 # not all versions of rm support -I
-if rm --help 2>/dev/null | grep -q -- ' -I '
+if [[ "$(rm --help 2>/dev/null)" == *" -I "* ]]
 then
 	alias rm='rm -Iv'
 else

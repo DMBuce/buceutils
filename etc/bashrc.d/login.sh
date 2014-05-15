@@ -1,6 +1,6 @@
 
 # skip if this isn't a login shell
-[[ "${0::1}" == "-" ]] || return
+[[ "$0" == -* ]] || return
 
-which fortune &>/dev/null && fortune -as
+command -v fortune &>/dev/null && fortune -as
 

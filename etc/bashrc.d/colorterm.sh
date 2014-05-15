@@ -22,10 +22,10 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-which colordiff &>/dev/null && alias diff='colordiff'
+command -v colordiff &>/dev/null && alias diff='colordiff'
 alias less='less -r'
 
-if which dircolors &>/dev/null; then
+if command -v dircolors &>/dev/null; then
 	eval "`dircolors -b`"
 fi
 

@@ -33,10 +33,10 @@ ulimit -u 256
 #alias sudo='sudo env PATH=${PATH}'
 #
 ## make less compression-friendly
-#if which lesspipe >/dev/null 2>&1
+#if command -v lesspipe >/dev/null 2>&1
 #then
 #    eval "$(SHELL=/bin/sh lesspipe)"
-#elif which lesspipe.sh >/dev/null 2>&1
+#elif command -v lesspipe.sh >/dev/null 2>&1
 #then
 #    export LESSOPEN="|/usr/bin/lesspipe.sh %s"
 #fi
