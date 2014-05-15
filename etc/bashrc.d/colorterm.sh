@@ -4,7 +4,7 @@ case "$TERM" in
   xterm*)
 	export TERM=xterm-256color
   ;;
-  linux|screen|rxvt*)
+  linux|screen*|rxvt*)
 	# do nothing
   ;;
   *)
@@ -29,20 +29,25 @@ if which dircolors &>/dev/null; then
 	eval "`dircolors -b`"
 fi
 
-ME='\u'
-HOST='\h'
-DIR='\W'
-PROMPT_COLOR='\[\e[1;32m\]'
-HAPPY_COLOR='\[\e[0\;33m\]'
-SAD_COLOR='\[\e[0\;36m\]'
-END_COLOR='\[\e[0m\]'
-#FACE="\`if [ \$? = 0 ]; then echo ${HAPPY_COLOR}\^_\^${END_COLOR}; else echo ${SAD_COLOR}T_T${END_COLOR}; fi\`"
-FACE="\`[ \$? = 0 ] && echo ${HAPPY_COLOR}\^_\^${END_COLOR} || echo ${SAD_COLOR}T_T${END_COLOR}\`"
-if [[ "`whoami`" == "root" ]]
-then
+if [[ "$USER" == "root" ]]; then
 	export PS1='\[\e[1;31m\]\u@\h\[\e[0m\]:\W\$ '
 else
-	export PS1="${FACE} ${PROMPT_COLOR}${ME}@${HOST}${END_COLOR}:${DIR}\\$ "
+	prompt-command() {
+		if (( $? )); then
+			local FACE='\[\e[0;36m\]T_T\[\e[0m\]'
+		else
+			local FACE='\[\e[0;33m\]^_^\[\e[0m\]'
+		fi
+
+		local ME HOST DIR PROMPT_COLOR END_COLOR
+
+		ME='\u'
+		HOST='\h'
+		DIR='\W'
+		PROMPT_COLOR='\[\e[1;32m\]'
+		END_COLOR='\[\e[0m\]'
+		export PS1="${FACE} ${PROMPT_COLOR}${ME}@${HOST}${END_COLOR}:${DIR}\\$ "
+	}
+	export PROMPT_COMMAND="prompt-command; ${PROMPT_COMMAND#prompt-command; }"
 fi
-unset ME HOST DIR PROMPT_COLOR HAPPY_COLOR SAD_COLOR END_COLOR FACE
 
