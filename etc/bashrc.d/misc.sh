@@ -10,6 +10,7 @@ alias halt='poweroff'
 #alias collate='paste -d " "'
 #alias tarball='tar -cvf -'
 #alias untar='tar -xvf'
+alias mplayer='mpv'
 
 # limit the max number of processes
 # prevents inadvertent fork bombs
