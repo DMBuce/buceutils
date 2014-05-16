@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ "$*" =~ (^| )("-h"|"--help")( |$) ]]; then
+	echo "Usage: ${0##*/}"
+	exit
+fi
+
+prompt=$'\x47\x6f\x62\x27\x73\x20\x70\x72\x6f\x67\x72\x61\x6d\x3a'
+prompt+=$'\x20\x20\x59\x2f\x4e\x3f'
+output=$'\x50\x65\x6e\x75\x73\x20'
+
+echo "$prompt" >&2
+read -p "? " ans
+
+if [[ "$ans" == [Yy]* ]]; then
+	while true; do
+		echo -n "$output"
+		sleep 0.01
+	done
+fi
+
