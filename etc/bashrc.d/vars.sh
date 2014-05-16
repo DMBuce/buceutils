@@ -4,10 +4,10 @@ export HISTCONTROL="ignoreboth"
 
 [[ "$PS1" == '[\u@\h \W]\$ ' ]] && export PS1='\u@\h:\W\$ '
 
-for DIR in /usr/kerberos/sbin /sbin /usr/sbin /usr/local/sbin ~/bin
+for dir in /usr/kerberos/sbin /sbin /usr/sbin /usr/local/sbin ~/bin
 do
-	pathmunge "$DIR"
+	pathmunge "$dir"
 done
-unset DIR
+unset dir
 export PATH
 
