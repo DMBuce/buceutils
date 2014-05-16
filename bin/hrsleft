@@ -3,9 +3,14 @@
 import sys
 
 prog = "hrsleft"
+usage = """Usage: hrsleft <time>
+
+    Prints the time left in a 40-hour work week, given the amount of <time>
+    you've worked this pay period.
+"""
 
 if len(sys.argv) == 1 or "--help" in sys.argv or "-h" in sys.argv:
-    print("Usage: " + prog + " <time>")
+    print(usage)
     sys.exit(0)
 
 try:
