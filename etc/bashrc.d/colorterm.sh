@@ -29,7 +29,7 @@ if command -v dircolors &>/dev/null; then
 	eval "`dircolors -b`"
 fi
 
-if [[ "$USER" == "root" ]]; then
+if [[ "$EUID" == 0 ]]; then
 	export PS1='\[\e[1;31m\]\u@\h\[\e[0m\]:\W\$ '
 else
 	prompt-command() {
