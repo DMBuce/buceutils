@@ -26,7 +26,7 @@ command -v colordiff &>/dev/null && alias diff='colordiff'
 alias less='less -r'
 
 if command -v dircolors &>/dev/null; then
-	eval "`dircolors -b`"
+	eval "$(dircolors -b)"
 fi
 
 if [[ "$EUID" == 0 ]]; then
