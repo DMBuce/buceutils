@@ -5,43 +5,10 @@ alias hd='od -Ax -tx1z -v'
 alias xp="xprop | egrep 'WM_WINDOW_ROLE|WM_CLASS|^WM_NAME'"
 alias xcolors='grabc'
 alias halt='poweroff'
-#alias dum='du -m | sort -n'
-#alias duh='du -h'
-#alias collate='paste -d " "'
-#alias tarball='tar -cvf -'
-#alias untar='tar -xvf'
 alias mplayer='mpv'
 
 # limit the max number of processes
-# prevents inadvertent fork bombs
 ulimit -u 256
-
-## bash completion rules
-#complete -c man
-#complete -cf sudo
-#if [[ -f /etc/bash_completion ]]
-#then
-#    source /etc/bash_completion
-#else
-#    [[ -d /etc/bash_completion.d ]] && \
-#    for file in /etc/bash_completion.d/*
-#    do
-#        source $file
-#    done
-#fi
-#
-## add bin directories to PATH
-#alias sudo='sudo env PATH=${PATH}'
-#
-## make less compression-friendly
-#if command -v lesspipe >/dev/null 2>&1
-#then
-#    eval "$(SHELL=/bin/sh lesspipe)"
-#elif command -v lesspipe.sh >/dev/null 2>&1
-#then
-#    export LESSOPEN="|/usr/bin/lesspipe.sh %s"
-#fi
-
 
 ## misc
 #NO_COLOR='\[\e[0m\]' #disable any colors
