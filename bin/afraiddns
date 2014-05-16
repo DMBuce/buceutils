@@ -33,14 +33,16 @@ elif [[ ! "$key" =~ ^[a-zA-Z0-9]{36}$ ]]; then
 	die "Parameter 'key' not set or invalid: $key"
 fi
 
+ipurls=(
+http://ip.dnsexit.com/
+http://icanhazip.com
+http://ip.appspot.com/
+http://ident.me
+http://tnx.nl/ip
+http://ifconfig.me
+)
 oldip="$ipaddr"
-newip="$(curl -s http://ip.dnsexit.com/)"
-#newip="$(curl -s http://ifconfig.me)"
-#newip="$(curl -s http://whatismyip.org)"
-#newip="$(curl -s http://icanhazip.com)"
-#newip="$(curl -s http://ip.appspot.com/)"
-#newip="$(curl -s http://tnx.nl/ip)"
-#newip="$(curl -s http://ident.me)"
+newip="$(curl -s "${ipurls[0]}")"
 
 if [[ "$newip" != "$oldip" && "$newip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
 	&& curl -s "https://freedns.afraid.org/dynamic/update.php?$key" >/dev/null
