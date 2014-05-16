@@ -4,7 +4,7 @@ import sys
 
 prog = "hrsleft"
 
-if len(sys.argv) == 1 or sys.argv[1] in ("--help", "-h"):
+if len(sys.argv) == 1 or "--help" in sys.argv or "-h" in sys.argv:
     print("Usage: " + prog + " <time>")
     sys.exit(0)
 

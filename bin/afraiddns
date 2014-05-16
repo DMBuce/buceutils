@@ -1,7 +1,7 @@
 #!/bin/bash
 # updates dns on afraid.org
 
-CONF="$1"
+conf="$1"
 
 die() {
 	echo "$1" >&2
@@ -9,44 +9,43 @@ die() {
 }
 
 # parse args
-if [[ "$1" == "--help" || "$1" == "-h" ]]; then
-	die "Usage: $(basename $0) [file]
+if [[ "$*" =~ (^| )("-h"|"--help")( |$) ]]; then
+	die "Usage: ${0##*/} [file]
 
     Update dns on afraid.org using <file> as a config. If no <file> is given,
     \$XDG_CONFIG_HOME/afraiddns.conf or ~/.config/afraiddns.conf is used.
 "
-elif [[ -z "$CONF" ]]; then
-	CONF="${XDG_CONFIG_HOME-$HOME/.config/afraiddns.conf}"
+elif [[ -z "$conf" ]]; then
+	conf="${XDG_CONFIG_HOME-$HOME/.config/afraiddns.conf}"
 fi
 
 # read config
-if [[ ! -r "$CONF" ]]; then
-	die "Could not read file: $CONF"
+if [[ ! -r "$conf" ]]; then
+	die "Could not read file: $conf"
 else
-	. "$CONF"
+	. "$conf"
 fi
 
-# validate CONF
+# validate conf
 if [[ -z "${ipaddr+x}" ]]; then
 	die "Parameter 'ipaddr' not set"
 elif [[ ! "$key" =~ ^[a-zA-Z0-9]{36}$ ]]; then
 	die "Parameter 'key' not set or invalid: $key"
 fi
 
-OLDIP="$ipaddr"
-KEY="$key"
-NEWIP=$(curl -s http://ip.dnsexit.com/)
-#NEWIP=$(curl -s http://ifconfig.me)
-#NEWIP=$(curl -s http://whatismyip.org)
-#NEWIP=$(curl -s http://icanhazip.com)
-#NEWIP=$(curl -s http://ip.appspot.com/)
-#NEWIP=$(curl -s http://tnx.nl/ip)
-#NEWIP=$(curl -s http://ident.me)
+oldip="$ipaddr"
+newip="$(curl -s http://ip.dnsexit.com/)"
+#newip="$(curl -s http://ifconfig.me)"
+#newip="$(curl -s http://whatismyip.org)"
+#newip="$(curl -s http://icanhazip.com)"
+#newip="$(curl -s http://ip.appspot.com/)"
+#newip="$(curl -s http://tnx.nl/ip)"
+#newip="$(curl -s http://ident.me)"
 
-if [[ "$NEWIP" != "$OLDIP" && "$NEWIP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
-	&& curl -s "https://freedns.afraid.org/dynamic/update.php?$KEY" >/dev/null
+if [[ "$newip" != "$oldip" && "$newip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+	&& curl -s "https://freedns.afraid.org/dynamic/update.php?$key" >/dev/null
 then
-	sed -i "/^ipaddr=/ s|.*|ipaddr='$NEWIP'|" "$CONF"
-	echo "IP address changed to $NEWIP"
+	sed -i "/^ipaddr=/ s|.*|ipaddr='$newip'|" "$conf"
+	echo "IP address changed to $newip"
 fi
 

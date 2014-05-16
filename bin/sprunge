@@ -8,15 +8,14 @@ usage() {
 "
 }
 
-case "$1" in "--help"|"-h")
+if [[ "$*" =~ (^| )("-h"|"--help")( |$) ]]; then
 	usage
 	exit
-esac
+fi
 
 if (( $# )); then
-	for i in "$@"
-	do
-		curl -F 'sprunge=<-' http://sprunge.us/ <"$i"
+	for file in "$@"; do
+		curl -F 'sprunge=<-' http://sprunge.us/ <"$file"
 	done
 else
 	curl -F 'sprunge=<-' http://sprunge.us/
