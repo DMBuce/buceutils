@@ -40,9 +40,11 @@ http://ip.appspot.com/
 http://ident.me
 http://tnx.nl/ip
 http://ifconfig.me
+http://ipecho.net/plain
 )
 oldip="$ipaddr"
 newip="$(curl -s "${ipurls[0]}")"
+#newip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
 if [[ "$newip" != "$oldip" && "$newip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
 	&& curl -s "https://freedns.afraid.org/dynamic/update.php?$key" >/dev/null
