@@ -1,0 +1,142 @@
+#!/bin/bash
+
+if [[ "$*" =~ (^| )"--help"( |$) ]]; then
+	echo "Usage: timestamp [format]
+
+    Prints a timestamp to stdout in the given <format>. If <format> is not
+    given it defaults to the ISO8601 date. In addition to the normal date(1)
+	options and format sequences, the following format sequences are available:
+
+        YYYY, yyyy   year; same as %Y
+        YY, yy       last two digits of year (00..99); same as %y
+        MM, mm       month (01..12) or minute (00..59), depending on context;
+                     same as %m or %M
+        DD, dd       day of month (e.g., 01); same as %d
+        HH, hh       hour (00..23); same as %H
+        SS, ss       second (00..60); same as %S
+
+"
+	exit
+fi
+
+# prints longest string to stdout
+longestr() {
+	local str longest=
+	for str in "$@"; do
+		if (( "${#str}" > "${#longest}" )); then
+			longest="$str"
+		fi
+	done
+	echo "$longest"
+}
+
+# returns the number of characters between the first occurence of "MM"
+# and one of "YY" or "DD" in a string
+mm2yd() {
+	local substr="$1"
+
+	# replace occurences of YYYY with YY to make them equal in length to DD
+	while [[ "$substr" == *YYYY* ]]; do
+		substr="${1//YYYY/YY}"
+	done
+
+	# strip up to the first MM, YY, or DD
+	substr="$(longestr "MM${substr#*MM}" "YY${substr#*YY}" "DD${substr#*DD}")"
+
+	if [[ "$substr" == MM* ]]; then
+		# strip the first DD or YY and everything after
+		substr="${substr%%DD*}"
+		substr="${substr%%YY*}"
+		# strip the leading MM
+		substr="${substr#MM}"
+	else
+		# strip the first MM and everything after
+		substr="${substr%%MM*}"
+		# strip the leading DD or YY
+		[[ "$substr" == DD* ]] && substr="${substr#DD}" || substr="${substr#YY}"
+	fi
+
+	echo "${#substr}"
+}
+
+# returns the number of characters between the first occurence of "MM"
+# and one of "HH" or "SS" in a string
+mm2hs() {
+	local substr="$1"
+
+	# strip up to the first MM, HH, or SS
+	substr="$(longestr "MM${substr#*MM}" "HH${substr#*HH}" "SS${substr#*SS}")"
+
+	if [[ "$substr" == MM* ]]; then
+		# strip the first SS or HH and everything after
+		substr="${substr%%SS*}"
+		substr="${substr%%HH*}"
+		# strip the leading MM
+		substr="${substr#MM}"
+	else
+		# strip the first MM and everything after
+		substr="${substr%%MM*}"
+		# strip the leading SS or HH
+		[[ "$substr" == SS* ]] && substr="${substr#SS}" || substr="${substr#HH}"
+	fi
+
+	echo "${#substr}"
+}
+
+date_args=()
+format=
+while (( $# )); do
+	if [[ "$1" == +* ]]; then
+		format="$1"
+		shift
+		date_args+=("$@")
+		shift "$#"
+	else
+		date_args+=("$1")
+		shift
+	fi
+done
+
+# convert case of format specifiers
+format="${format//yy/YY}"
+format="${format//dd/DD}"
+format="${format//hh/HH}"
+format="${format//ss/SS}"
+format="${format//mm/MM}"
+
+# figure out how to convert MM
+# yyyy-mm-dd-hh-mm-ss == yyyy-<month>-dd-hh-<min>-ss
+while [[ "$format" == *MM* ]]; do
+	# if it has date but no time specifiers
+	if [[ ( "$format" == *YY* || "$format" == *DD* ) \
+		&& ( "$format" != *HH* && "$format" != *SS* ) ]]
+	then
+		format="${format/MM/%m}"
+	# if it has time but no date specifiers
+	elif [[ ( "$format" == *HH* || "$format" == *SS* ) \
+		&& ( "$format" != *YY* && "$format" != *DD* ) ]]
+	then
+		format="${format/MM/%M}"
+	# if it has no date or time specifiers
+	elif [[ "$format" != *YY* && "$format" != *DD* \
+		&& "$format" != *HH* && "$format" != *SS* ]]
+	then
+		format="${format/MM/%m}"
+	# MM is closer to date specifiers
+	elif (( "$(mm2yd "$format")" <= "$(mm2hs "$format")" )); then
+		format="${format/MM/%m}"
+	# MM is closer to time specifiers
+	else
+		format="${format/MM/%M}"
+	fi
+done
+
+# convert format specifiers to date(1) format specifiers
+format="${format//YYYY/%Y}"
+format="${format//YY/%y}"
+format="${format//DD/%d}"
+format="${format//HH/%H}"
+format="${format//SS/%S}"
+
+date "${date_args[@]}" "$format"
+
