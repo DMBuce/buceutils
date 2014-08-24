@@ -30,59 +30,70 @@ longestr() {
 	echo "$longest"
 }
 
-# returns the number of characters between the first occurence of "MM"
-# and one of "YY" or "DD" in a string
-mm2yd() {
-	local substr="$1"
+# usage: charsbetween <string> <substr1> <substr2>
+#
+# Prints the number of intervening characters between <substr1> and <substr2> 
+# in <string>
+#
+# Examples:
+#
+# $ charsbetween foobarbazasdf foo asdf
+# 6
+# $ charsbetween foobarbazasdf foo baz
+# 3
+# $ charsbetween foobarbazasdf baz foo
+# 3
+# $ charsbetween foobarbazasdf bar baz
+# 0
+#
+charsbetween() {
+	local string str1 str2
+	string="$1"
+	str1="$2"
+	str2="$3"
 
-	# replace occurences of YYYY with YY to make them equal in length to DD
-	while [[ "$substr" == *YYYY* ]]; do
-		substr="${1//YYYY/YY}"
+	# validate string
+	if [[ "$string" != *"$str1"* || "$string" != *"$str2"* ]]; then
+		echo -1
+		return 1
+	fi
+
+	substr="$string"
+
+	substr="$(longestr "$str1${substr#*$str1}" "$str2${substr#*$str2}")"
+	if [[ "$substr" == "$str1"* ]]; then
+		substr="${substr#$str1}"
+		substr="${substr%%$str2*}"
+	else
+		substr="${substr#$str2}"
+		substr="${substr%%$str1*}"
+	fi
+
+	echo ${#substr}
+}
+
+# usage: charsbetween <string> <substr1> <substr2> [substr3] ...
+#
+# Prints the number of intervening characters between <substr1> and other given
+# <substr>'s in <string>
+mincharsbetween() {
+	local format substr1 substr2 retval
+	format="$1"
+	substr1="$2"
+	shift 2
+
+	retval="${#format}"
+	for substr2 in "$@"; do
+		dist="$(charsbetween "$format" "$substr1" "$substr2")"
+		if (( dist != -1 && dist < retval )); then
+			retval="$dist"
+		fi
 	done
 
-	# strip up to the first MM, YY, or DD
-	substr="$(longestr "MM${substr#*MM}" "YY${substr#*YY}" "DD${substr#*DD}")"
-
-	if [[ "$substr" == MM* ]]; then
-		# strip the first DD or YY and everything after
-		substr="${substr%%DD*}"
-		substr="${substr%%YY*}"
-		# strip the leading MM
-		substr="${substr#MM}"
-	else
-		# strip the first MM and everything after
-		substr="${substr%%MM*}"
-		# strip the leading DD or YY
-		[[ "$substr" == DD* ]] && substr="${substr#DD}" || substr="${substr#YY}"
-	fi
-
-	echo "${#substr}"
+	echo "$retval"
 }
 
-# returns the number of characters between the first occurence of "MM"
-# and one of "HH" or "SS" in a string
-mm2hs() {
-	local substr="$1"
-
-	# strip up to the first MM, HH, or SS
-	substr="$(longestr "MM${substr#*MM}" "HH${substr#*HH}" "SS${substr#*SS}")"
-
-	if [[ "$substr" == MM* ]]; then
-		# strip the first SS or HH and everything after
-		substr="${substr%%SS*}"
-		substr="${substr%%HH*}"
-		# strip the leading MM
-		substr="${substr#MM}"
-	else
-		# strip the first MM and everything after
-		substr="${substr%%MM*}"
-		# strip the leading SS or HH
-		[[ "$substr" == SS* ]] && substr="${substr#SS}" || substr="${substr#HH}"
-	fi
-
-	echo "${#substr}"
-}
-
+# parse args
 date_args=()
 format=
 while (( $# )); do
@@ -104,30 +115,31 @@ format="${format//hh/HH}"
 format="${format//ss/SS}"
 format="${format//mm/MM}"
 
-# figure out how to convert MM
-# yyyy-mm-dd-hh-mm-ss == yyyy-<month>-dd-hh-<min>-ss
+# categorize different format sequences
+date_formatters=(YY DD)
+time_formatters=(HH SS)
+
+# normalize the format so that YYYY is the same length as YY
+normformat="${format//YYYY/YY}"
+while [[ "$normaformat" == *YYYY* ]]; do
+	normformat="${format//YYYY/YY}"
+done
+
+# loop through each instance of MM
 while [[ "$format" == *MM* ]]; do
-	# if it has date but no time specifiers
-	if [[ ( "$format" == *YY* || "$format" == *DD* ) \
-		&& ( "$format" != *HH* && "$format" != *SS* ) ]]
-	then
+	# find shortest length between MM and date/time formatters
+	date_dist="$(mincharsbetween "$normformat" MM "${date_formatters[@]}")"
+	time_dist="$(mincharsbetween "$normformat" MM "${time_formatters[@]}")"
+	
+	# figure out how to convert MM
+	# if the nearest formatter to MM is a $date_formatters, convert MM to month
+	# if the nearest formatter to MM is a $time_formatters, convert MM to minute
+	if (( date_dist <= time_dist )); then
 		format="${format/MM/%m}"
-	# if it has time but no date specifiers
-	elif [[ ( "$format" == *HH* || "$format" == *SS* ) \
-		&& ( "$format" != *YY* && "$format" != *DD* ) ]]
-	then
-		format="${format/MM/%M}"
-	# if it has no date or time specifiers
-	elif [[ "$format" != *YY* && "$format" != *DD* \
-		&& "$format" != *HH* && "$format" != *SS* ]]
-	then
-		format="${format/MM/%m}"
-	# MM is closer to date specifiers
-	elif (( "$(mm2yd "$format")" <= "$(mm2hs "$format")" )); then
-		format="${format/MM/%m}"
-	# MM is closer to time specifiers
+		normformat="${normformat/MM/%m}"
 	else
 		format="${format/MM/%M}"
+		normformat="${normformat/MM/%M}"
 	fi
 done
 

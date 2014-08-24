@@ -10,6 +10,7 @@ my $urlfmt = "http://gatherer.wizards.com/pages/card/details.aspx?name=%2\$s";
 my $format = "html";
 my %formats = (
 	html     => "<a href=\"$urlfmt\">%1\$s</a>", # html link
+	asciidoc => "$urlfmt\[%1\$s]",               # asciidoc link
 	markdown => "[%s]($urlfmt)",                 # markdown link
 	text     => "%s",                            # plain text
 	url      => $urlfmt,                         # url link
@@ -25,9 +26,10 @@ Usage: mtg2html [options] [file] [file2] ...
     Options:
 
         -f, --format=<format>   The output format. This can be an arbitrary
-                                format string suitable for printf(), or one of
-                                the special values "html", "markdown", "text",
-                                "url", or "wiki". The default is "html"
+                                format string suitable for printf(), or one
+                                of the special values "html", "asciidoc",
+                                "markdown", "text", "url", or "wiki".
+                                The default is "html"
         --help                  Print this help text and exit
 
 EOF
