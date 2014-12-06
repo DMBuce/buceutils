@@ -2,7 +2,7 @@
 
 # nothing too tricky here
 alias -- -='cd -'
-alias ..='cd ..;'
+#alias ..='cd ..;' # moved to functions.sh
 alias cd..='cd ..'
 alias ls..='ls ..'
 alias l='ls'
