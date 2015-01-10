@@ -17,13 +17,3 @@ pathmunge () {
 		printf "Could not find %s in working directory path: %s\n" "$1" "$PWD" >&2
 }
 
-_dotdot_complete() {
-	(( COMP_CWORD > 1 )) && return
-	local dirname="${PWD%/*}"
-	IFS=$'\n' COMPREPLY=(
-		$(IFS=/ compgen -W "${dirname:1}" -- "${COMP_WORDS[COMP_CWORD]}")
-	)
-}
-
-complete -F _dotdot_complete ..
-

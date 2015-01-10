@@ -48,10 +48,11 @@ URL       = https://github.com/DMBuce/buceutils
 
 BINFILES         = $(wildcard bin/*)
 BINFILES_INSTALL = $(BINFILES:bin/%=$(DESTDIR)$(bindir)/%)
-ETCFILES         = $(wildcard etc/bashrc.d/*)
+ETCFILES         = $(wildcard etc/bashrc.d/* etc/bash_completion.d/buceutils)
 ETCFILES_INSTALL = $(ETCFILES:etc/%=$(DESTDIR)$(sysconfdir)/%)
 INSTALL_FILES    = $(BINFILES_INSTALL) $(ETCFILES_INSTALL)
-INSTALL_DIRS     = $(DESTDIR)$(bindir) $(DESTDIR)$(sysconfdir)/bashrc.d
+INSTALL_DIRS     = $(DESTDIR)$(bindir) $(DESTDIR)$(sysconfdir)/bashrc.d \
+                   $(DESTDIR)$(sysconfdir)/bash_completion.d
 
 .PHONY: all
 all:
@@ -69,6 +70,9 @@ $(DESTDIR)$(bindir)/%: bin/%
 	$(INSTALL_PROGRAM) $< $@
 
 $(DESTDIR)$(sysconfdir)/bashrc.d/%: etc/bashrc.d/%
+	$(INSTALL_PROGRAM) $< $@
+
+$(DESTDIR)$(sysconfdir)/bash_completion.d/%: etc/bash_completion.d/%
 	$(INSTALL_PROGRAM) $< $@
 
 # vim: set ft=make:
