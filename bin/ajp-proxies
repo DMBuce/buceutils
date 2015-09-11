@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# config file
+config="$HOME/.config/mkproxies.conf" 
+
+# print a formatted message to stdout
+msg() {
+	local message="$1"
+	shift
+	printf "$message\n" "$@"
+}
+
+# print a formatted message to stderr
+warn() {
+	msg "$@" >&2
+}
+
+# print a formatted message to stderr
+err() {
+	msg "$@" >&2
+}
+
+# convert a url to an ip address or hostname
+url2host() {
+	local host="$1"
+	host="${host#*://}"
+	host="${host#*@}"
+	host="${host%%/*}"
+	host="${host%:*}"
+	echo "$host"
+}
+
+# print contexts of tomcat server
+getcontexts() {
+	curl "$@" | grep -o '^/[^:]*'
+}
+
+# filter out contexts provided in arguments and in exclude file
+filtercontexts() {
+	if [[ -n "$*" ]]; then
+		grep -vf "$excludefile" | grep -v "$(printf "^%s$\n" "$@")"
+	else
+		grep -vf "$excludefile"
+	fi
+}
+
+# print usage
+if [[ "$*" =~ (^| )--help( |$) ]]; then
+	err "Usage: ${0##*/}"
+	err
+	err "Creates an Apache configuration file for Tomcat AJP proxies."
+	err
+	err "Configuration file is at %s" "$config"
+	err "For an example of that file, remove it and run \`${0##*/}\` with no arguments."
+	err
+	exit
+fi
+
+# get config
+if [[ -f "$config" ]]; then
+	. "$config"
+else
+	err "Configuration file does not exist: %s" "$config"
+	err "Example of this file follows"
+
+	cat >&2 <<EOF
+
+# options to pass to curl
+curlopts='-ks'
+
+# file with list of contexts to exclude
+excludefile='/etc/httpd/conf.d/proxy_ajp.conf.exclude'
+
+# Tomcat's plain text List Applications page
+# https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html
+# https://tomcat.apache.org/tomcat-6.0-doc/manager-howto.html
+urls=(
+	# tomcat 7
+	'https://username:password@tomcat7-server.example.com:8443/manager/text/list'
+	# tomcat 6
+	'https://username:password@tomcat6-server.example.com:9443/manager/list'
+)
+
+# AJP ports that the servers in \$urls use
+ajpports=(
+	'8009'
+	'9009'
+)
+
+EOF
+	exit 1
+fi
+
+# sanity check $urls and $ajpports
+if (( ${#urls[@]} != ${ajpports[@]} )); then
+	err "Error in configuration file: %s" "$config"
+	err "Number of elements in 'urls' and 'ajpports' does not match"
+	exit 1
+fi
+
+# check for non-integers in $ajpports
+for port in "${ajpports[@]}"; do
+	if [[ ! "$port" =~ ^[0-9]+$ ]]; then
+		err "Error in configuration file: %s" "$config"
+		err "Non-integer in 'ajpports': %s" "$port"
+		exit 1
+	fi
+done
+
+# normalize $excludefile if not given
+# otherwise check that it exists and is readable
+if [[ -z "$excludefile" ]]; then
+	warn "Using /dev/null for 'excludefile'"
+	excludefile=/dev/null
+elif [[ ! -r "$excludefile" ]]; then
+	err "Error in configuration file: %s" "$config"
+	err "Can't read file: %s" "$excludefile"
+	exit 1
+fi
+
+# iterate through each host and print all relevant proxies
+CONTEXTS=()
+for ((i=0; i<"${#urls[@]}"; i++)); do
+	url="${urls[i]}"
+	port="${ajpports[i]}"
+	host="$(url2host "$url")"
+	contexts=( $(getcontexts $curlopts "$url" | filtercontexts "${CONTEXTS[@]}" ) )
+	CONTEXTS+=("${contexts[@]}")
+	printf "%s\n" "${contexts[@]}" | sed "s|.*|ProxyPass & ajp://$host:$port&|"
+done | sort
+
