@@ -72,6 +72,10 @@ else
 # options to pass to curl
 curlopts='-ks'
 
+# header and footer files
+headerfile='/etc/httpd/conf.d/proxy_ajp.conf.header'
+footerfile='/etc/httpd/conf.d/proxy_ajp.conf.footer'
+
 # file with list of contexts to exclude
 excludefile='/etc/httpd/conf.d/proxy_ajp.conf.exclude'
 
@@ -128,8 +132,8 @@ for ((i=0; i<"${#urls[@]}"; i++)); do
 	url="${urls[i]}"
 	port="${ajpports[i]}"
 	host="$(url2host "$url")"
-	contexts=( $(getcontexts $curlopts "$url" | filtercontexts "${CONTEXTS[@]}" ) )
+	contexts=( $(getcontexts $curlopts "$url" | filtercontexts "${CONTEXTS[@]}") )
 	CONTEXTS+=("${contexts[@]}")
 	printf "%s\n" "${contexts[@]}" | sed "s|.*|ProxyPass & ajp://$host:$port&|"
-done | sort
+done | sort | cat "$headerfile" - "$footerfile" 2>/dev/null
 
