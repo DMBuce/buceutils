@@ -1,4 +1,5 @@
 #!/bin/bash
+# prints an Apache configuration file for Tomcat AJP proxies.
 
 prog="${0##*/}"
 
@@ -50,7 +51,7 @@ filtercontexts() {
 if [[ "$*" =~ (^| )--help( |$) ]]; then
 	err "Usage: $prog [config]"
 	err
-	err "Creates an Apache configuration file for Tomcat AJP proxies."
+	err "Prints an Apache configuration file for Tomcat AJP proxies."
 	err
 	err "Uses options in <config> or %s to connect to a" "~/.config/$prog.conf"
 	err "Tomcat server and list running contexts. For an example of that file,"
