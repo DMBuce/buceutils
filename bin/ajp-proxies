@@ -115,6 +115,15 @@ for port in "${ajpports[@]}"; do
 	fi
 done
 
+# check header and footer
+for file in "$headerfile" "$footerfile"; do
+	if [[ -n "$file" && ! -r "$file" ]]; then
+		err "Error in configuration file: %s" "$config"
+		err "Can't read file: %s" "$file"
+		exit 1
+	fi
+done
+
 # normalize $excludefile if not given
 # otherwise check that it exists and is readable
 if [[ -z "$excludefile" ]]; then
