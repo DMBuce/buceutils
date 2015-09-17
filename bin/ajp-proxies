@@ -100,7 +100,7 @@ EOF
 fi
 
 # sanity check $urls and $ajpports
-if (( ${#urls[@]} != ${ajpports[@]} )); then
+if (( ${#urls[@]} != ${#ajpports[@]} )); then
 	err "Error in configuration file: %s" "$config"
 	err "Number of elements in 'urls' and 'ajpports' does not match"
 	exit 1
