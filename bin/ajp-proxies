@@ -143,6 +143,7 @@ for ((i=0; i<"${#urls[@]}"; i++)); do
 	host="$(url2host "$url")"
 	contexts=( $(getcontexts $curlopts "$url" | filtercontexts "${CONTEXTS[@]}") )
 	CONTEXTS+=("${contexts[@]}")
-	printf "%s\n" "${contexts[@]}" | sed "s|.*|ProxyPass & ajp://$host:$port&|"
+	printf "%-20s\n" "${contexts[@]}" | \
+		sed "s|.*|ProxyPass & ajp://$host:$port&|; s| *$||"
 done | sort | cat "$headerfile" - "$footerfile" 2>/dev/null
 
