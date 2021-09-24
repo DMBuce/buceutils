@@ -8,7 +8,7 @@ alias halt='poweroff'
 alias mplayer='mpv'
 
 # limit the max number of processes
-ulimit -u 256
+ulimit -u 1024
 
 ## misc
 #no_color='\[\e[0m\]' #disable any colors
