@@ -16,7 +16,7 @@ hourlies="${RESTICBACKUP_HOURLIES-12}"
 dailies="${RESTICBACKUP_DAILIES-7}"
 weeklies="${RESTICBACKUP_WEEKLIES-4}"
 hourlies="${RESTICBACKUP_MONTHLIES-3}"
-hostname="$(hostname -s)"
+hostname="${HOSTNAME%%.*}"
 retval=0
 
 # send all output to log file
