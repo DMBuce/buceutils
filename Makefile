@@ -51,7 +51,7 @@ ETCFILES         = $(shell find etc/ -type f)
 BINFILES_INSTALL = $(BINFILES:bin/%=$(DESTDIR)$(bindir)/%)
 ETCFILES_INSTALL = $(ETCFILES:etc/%=$(DESTDIR)$(sysconfdir)/%)
 INSTALL_FILES    = $(BINFILES_INSTALL) $(ETCFILES_INSTALL)
-INSTALL_DIRS     = $(dir $(INSTALL_FILES))
+INSTALL_DIRS     = $(sort $(dir $(INSTALL_FILES)))
 #INSTALL_DIRS     = $(DESTDIR)$(bindir) $(DESTDIR)$(sysconfdir)/bashrc.d \
 #                   $(DESTDIR)$(sysconfdir)/bash_completion.d
 
