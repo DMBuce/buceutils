@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# source config
+config=/etc/resticbackup.d/config
+set -a
+. "$config"
+set +a
+
+# default settings
+excludefile="${RESTICBACKUP_EXCLUDE_FILE-/etc/resticbackup.d/exclude}"
+mailto="${RESTICBACKUP_MAILTO-}"
+logfile="${RESTICBACKUP_LOG_FILE-/var/log/resticbackup.log}"
+mounted="${RESTICBACKUP_MOUNTED-1}"
+prune="${RESTICBACKUP_PRUNE-1}"
+hourlies="${RESTICBACKUP_HOURLIES-12}"
+dailies="${RESTICBACKUP_DAILIES-7}"
+weeklies="${RESTICBACKUP_WEEKLIES-4}"
+hourlies="${RESTICBACKUP_MONTHLIES-3}"
+hostname="$(hostname -s)"
+retval=0
+
+# send all output to log file
+exec &> "$logfile"
+
+# print timestamp
+prog="${0##*/}"
+date +"%F %T %:z $prog start"
+
+# be nice
+which renice &>/dev/null && renice 10 -p $$
+
+# sanity checks
+#
+# check environment variables
+if [[ -z "$RESTIC_REPOSITORY" ]]; then
+	echo "Environment variable not set in $config: \$RESTIC_REPOSITORY" >&2
+	retval=1
+elif [[ -z "$RESTIC_PASSWORD_FILE" ]]; then
+	echo "Environment variable not set in $config: \$RESTIC_PASSWORD_FILE" >&2
+	retval=1
+# make sure another instance of this script isn't running
+elif (( $(pidof -x "$prog" | wc -l) > 1 )); then
+	echo "Another $prog process is already running" >&2
+	retval=1
+# check exclude file exists and can be read
+elif [[ ! -r "$excludefile" ]]; then
+	echo "Can't read file: $excludefile" >&2
+	retval=1
+# check that repo is a mount point
+elif (( mounted != 0 )) && ! mountpoint -q "$RESTIC_REPOSITORY"; then
+	echo "Not a mount point: $RESTIC_REPOSITORY" >&2
+	retval=1
+# create repo if it doesn't exist
+# https://restic.readthedocs.io/en/stable/075_scripting.html
+# if repo already exists, `restic init` errors out without overwriting it
+elif ! restic snapshots &>/dev/null; then
+	restic init || retval=1
+fi
+
+# do the thing
+if (( retval == 0 )); then
+	# take a backup
+	restic -v --exclude-file="$excludefile" backup / || retval=1
+
+	# once a week, prune backups and do an integrity check
+	if (( prune )); then
+		# prune old backups
+		restic forget --prune \
+			--keep-hourly "$hourlies" \
+			--keep-daily "$dailies" \
+			--keep-weekly "$weeklies" \
+			--keep-monthly "$monthlies" \
+			|| retval=1
+	fi
+fi
+
+# print timestamp
+date +"%F %T %:z $prog end"
+
+# email failures
+if [[ -n "$mailto" && "$retval" != 0 ]]; then
+	subject="Restic Backup FAILURE - $hostname"
+	/usr/sbin/sendmail "$mailto" <<-EOF
+		Subject: $subject
+		$(<"$logfile")
+	EOF
+fi
+exit $retval
+

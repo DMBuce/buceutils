@@ -1,0 +1,10 @@
+/backup
+/dev
+/etc/mtab
+/media
+/mnt
+/proc
+/selinux
+/sys
+/tmp
+/var/log/lastlog

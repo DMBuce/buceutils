@@ -1,0 +1,20 @@
+#!bash
+
+## restic environment variables
+#RESTIC_PASSWORD_FILE='/etc/resticbackup.d/password'
+#RESTIC_REPOSITORY='/backup/restic'
+
+## resticbackup environment variables
+#RESTICBACKUP_EXCLUDE_FILE=/etc/resticbackup.d/exclude
+#RESTICBACKUP_MAILTO=
+#RESTICBACKUP_LOG_FILE=/var/log/resticbackup.log
+## whether to check that the repository is a mount point
+#RESTICBACKUP_MOUNTED=1
+## whether to prune old backups
+#RESTICBACKUP_PRUNE=1
+## number of hourly/daily/weekly/monthly backups to keep when pruning
+#RESTICBACKUP_HOURLIES=12
+#RESTICBACKUP_DAILIES=7
+#RESTICBACKUP_WEEKLIES=4
+#RESTICBACKUP_MONTHLIES=3
+

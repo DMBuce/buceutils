@@ -21,6 +21,7 @@ They all require GNU coreutils.
 * hrsleft: python
 * mtg2html: perl
 * randarg: none
+* resticbackup: restic
 * sprunge: curl
 * sshdiff: openssh, diffutils
 * uniqaddr: perl, Net::CIDR::Lite
