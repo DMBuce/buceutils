@@ -69,10 +69,9 @@ $(DESTDIR)$(bindir)/%: bin/%
 	$(INSTALL_PROGRAM) $< $@
 
 $(DESTDIR)$(sysconfdir)/%: etc/%
-	$(INSTALL_PROGRAM) $< $@
+	$(INSTALL_DATA) $< $@
 
 $(DESTDIR)$(sysconfdir)/resticbackup.d/password: etc/resticbackup.d/password
-	$(INSTALL_PROGRAM) $< $@
-	chmod 600 $@
+	$(INSTALL) -m 600 $< $@
 
 # vim: set ft=make:
