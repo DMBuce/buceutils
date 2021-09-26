@@ -70,10 +70,13 @@ $(INSTALL_DIRS):
 $(DESTDIR)$(bindir)/%: bin/%
 	$(INSTALL_PROGRAM) $< $@
 
-$(DESTDIR)$(sysconfdir)/bashrc.d/%: etc/bashrc.d/%
+$(DESTDIR)$(sysconfdir)/%: etc/%
 	$(INSTALL_PROGRAM) $< $@
 
-$(DESTDIR)$(sysconfdir)/bash_completion.d/%: etc/bash_completion.d/%
-	$(INSTALL_PROGRAM) $< $@
+#$(DESTDIR)$(sysconfdir)/bashrc.d/%: etc/bashrc.d/%
+#	$(INSTALL_PROGRAM) $< $@
+#
+#$(DESTDIR)$(sysconfdir)/bash_completion.d/%: etc/bash_completion.d/%
+#	$(INSTALL_PROGRAM) $< $@
 
 # vim: set ft=make:
