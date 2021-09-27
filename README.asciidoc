@@ -26,7 +26,7 @@ They all require GNU coreutils.
 * sshdiff: openssh, diffutils
 * uniqaddr: perl, Net::CIDR::Lite
 * vol: alsa-utils
-* wscrot: xorg-xrandr, awk, imagemagick
+* wscrot: xorg-xrandr, awk, imagemagick, xclip
 
 Installation
 ------------
