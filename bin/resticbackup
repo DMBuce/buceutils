@@ -20,6 +20,7 @@ hostname="${HOSTNAME%%.*}"
 retval=0
 
 # send all output to log file
+[[ -t 1 ]] && echo "Logging to $logfile" >&2
 exec &> "$logfile"
 
 # print timestamp
