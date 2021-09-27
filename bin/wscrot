@@ -18,7 +18,7 @@ fi
 # set default filename
 if (( ! $# )); then
 	now="$(date +%Y-%m-%d-%H%M%S)"
-	res="$(xrandr | grep '*' | awk '{print $1}')"
+	res="$(xrandr | awk '/*/ {print $1}')"
 	set "${now}_${res}_scrot.png"
 fi
 
