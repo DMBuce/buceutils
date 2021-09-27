@@ -1,6 +1,7 @@
 #!/bin/bash
 # takes screenshot of current window
 
+# prints usage
 usage() {
 	echo "Usage: ${0##*/} [file]
 
@@ -8,16 +9,22 @@ usage() {
 "
 }
 
+# print help output
 if [[ "$*" =~ (^| )("-h"|"--help")( |$) ]]; then
 	usage
 	exit
 fi
 
+# set default filename
 if (( ! $# )); then
 	now="$(date +%Y-%m-%d-%H%M%S)"
 	res="$(xrandr | grep '*' | awk '{print $1}')"
 	set "${now}_${res}_scrot.png"
 fi
 
+# export current window
 import -frame -window "$(xprop _NET_ACTIVE_WINDOW -root | cut -d' ' -f5)" "$@"
+
+# copy image to clipboard
+xclip -selection clipboard -target image/png -i "$@"
 
