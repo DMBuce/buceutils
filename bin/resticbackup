@@ -78,7 +78,7 @@ elif ! restic snapshots &>/dev/null && ! restic init; then
 fi
 
 # be nice
-command -v renice &>/dev/null && renice 10 -p $$
+command -v renice &>/dev/null && renice 10 -p $$ >/dev/null
 
 # run hooks
 for hook in "$hooks"/pre/*; do
