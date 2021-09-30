@@ -6,6 +6,7 @@
 
 ## resticbackup environment variables
 #RESTICBACKUP_EXCLUDE_FILE=/etc/resticbackup.d/exclude
+#RESTICBACKUP_LOG_FILE=-
 ## whether to check that the repository is a mount point
 #RESTICBACKUP_MOUNTED=1
 ## arguments to pass to `restic forget` when pruning

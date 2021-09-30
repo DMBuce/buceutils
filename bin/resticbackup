@@ -9,6 +9,7 @@ set +a
 
 # default settings
 RESTICBACKUP_EXCLUDE_FILE="${RESTICBACKUP_EXCLUDE_FILE-/etc/$prog.d/exclude}"
+RESTICBACKUP_LOG_FILE="${RESTICBACKUP_LOG_FILE--}"
 RESTICBACKUP_MOUNTED="${RESTICBACKUP_MOUNTED-1}"
 RESTICBACKUP_PRUNE_ARGS="${RESTICBACKUP_PRUNE_ARGS=--prune --keep-hourly 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3}"
 
@@ -33,6 +34,13 @@ fi
 
 # parse args
 action="$1"
+
+# logging
+if [[ "$RESTICBACKUP_LOG_FILE" != - ]]; then
+	[[ -t 1 ]] && echo "Logging to $RESTICBACKUP_LOG_FILE" >&2
+	mkdir -pv "$(dirname "$RESTICBACKUP_LOG_FILE")"
+	exec &>> "$RESTICBACKUP_LOG_FILE"
+fi
 
 # sanity checks
 #
@@ -72,6 +80,11 @@ fi
 # be nice
 command -v renice &>/dev/null && renice 10 -p $$
 
+# run hooks
+for hook in "$hooks"/pre/*; do
+	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
+done
+
 # do the thing
 retval=0
 case "$action" in
@@ -86,7 +99,7 @@ case "$action" in
 esac
 
 # run hooks
-for hook in "$hooks"/*; do
+for hook in "$hooks"/post/*; do
 	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
 done
 
