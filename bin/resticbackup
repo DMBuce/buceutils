@@ -1,90 +1,95 @@
 #!/bin/bash
 
 # source config
-config=/etc/resticbackup.d/config
+prog=resticbackup
+config="/etc/$prog.d/config"
 set -a
 . "$config"
 set +a
 
 # default settings
-excludefile="${RESTICBACKUP_EXCLUDE_FILE-/etc/resticbackup.d/exclude}"
-mailto="${RESTICBACKUP_MAILTO-}"
-logfile="${RESTICBACKUP_LOG_FILE-/var/log/resticbackup.log}"
-mounted="${RESTICBACKUP_MOUNTED-1}"
-prune="${RESTICBACKUP_PRUNE-1}"
-hourlies="${RESTICBACKUP_HOURLIES-12}"
-dailies="${RESTICBACKUP_DAILIES-7}"
-weeklies="${RESTICBACKUP_WEEKLIES-4}"
-monthlies="${RESTICBACKUP_MONTHLIES-3}"
+RESTICBACKUP_EXCLUDE_FILE="${RESTICBACKUP_EXCLUDE_FILE-/etc/$prog.d/exclude}"
+RESTICBACKUP_MOUNTED="${RESTICBACKUP_MOUNTED-1}"
+RESTICBACKUP_PRUNE_ARGS="${RESTICBACKUP_PRUNE_ARGS=--prune --keep-hourly 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3}"
+
+# vars
+hooks="/etc/$prog.d/hooks"
 hostname="${HOSTNAME%%.*}"
-retval=0
+usage="Syntax: $prog <backup|prune>
 
-# send all output to log file
-[[ -t 1 ]] && echo "Logging to $logfile" >&2
-exec &> "$logfile"
+    Use Restic to perform one or more actions: back up the system or
+    prune backups.
 
-# print timestamp
-prog="${0##*/}"
-date +"%F %T %:z $prog start"
+    When called with no arguments, if this script is named 'restic_backup'
+    or 'restic_prune', the action to perform is inferred from the script name.
+"
 
-# be nice
-which renice &>/dev/null && renice 10 -p $$
+# set default behavior when called with no arguments
+if [[ $# == 0 && "$prog" == restic_backup ]]; then
+	set -- backup
+elif [[ $# == 0 && "$prog" == restic_prune ]]; then
+	set -- prune
+fi
+
+# parse args
+action="$1"
 
 # sanity checks
 #
+# check arguments
+if [[ ! "$action" =~ ^(backup|prune)$ || $# != 1 ]]; then
+	echo "$usage" >&2
+	exit 1
 # check environment variables
-if [[ -z "$RESTIC_REPOSITORY" ]]; then
+elif [[ -z "$RESTIC_REPOSITORY" ]]; then
 	echo "Environment variable not set in $config: \$RESTIC_REPOSITORY" >&2
-	retval=1
+	exit 1
 elif [[ -z "$RESTIC_PASSWORD_FILE" ]]; then
 	echo "Environment variable not set in $config: \$RESTIC_PASSWORD_FILE" >&2
-	retval=1
+	exit 1
 # make sure another instance of this script isn't running
-elif (( $(pidof -x "$prog" | wc -l) > 1 )); then
-	echo "Another $prog process is already running" >&2
-	retval=1
+elif pids="$(pidof -x "$prog")"; (( $(wc -w <<< "$pids") > 1 )); then
+	echo "One or more other $prog processes are already running: $pids" >&2
+	exit 1
 # check exclude file exists and can be read
-elif [[ ! -r "$excludefile" ]]; then
-	echo "Can't read file: $excludefile" >&2
-	retval=1
-# check that repo is a mount point
-elif (( mounted != 0 )) && ! mountpoint -q "$RESTIC_REPOSITORY"; then
+elif [[ ! -r "$RESTICBACKUP_EXCLUDE_FILE" ]]; then
+	echo "Can't read file: $RESTICBACKUP_EXCLUDE_FILE" >&2
+	exit 1
+# check mount point
+elif (( RESTICBACKUP_MOUNTED != 0 )) && ! mountpoint -q "$RESTIC_REPOSITORY"; then
 	echo "Not a mount point: $RESTIC_REPOSITORY" >&2
-	retval=1
+	exit 1
 # create repo if it doesn't exist
 # https://restic.readthedocs.io/en/stable/075_scripting.html
 # if repo already exists, `restic init` errors out without overwriting it
-elif ! restic snapshots &>/dev/null; then
-	restic init || retval=1
-fi
-
-# do the thing
-if (( retval == 0 )); then
-	# take a backup
-	restic -v --exclude-file="$excludefile" backup / || retval=1
-
-	# once a week, prune backups and do an integrity check
-	if (( prune )); then
-		# prune old backups
-		restic forget --prune \
-			--keep-hourly "$hourlies" \
-			--keep-daily "$dailies" \
-			--keep-weekly "$weeklies" \
-			--keep-monthly "$monthlies" \
-			|| retval=1
+elif ! restic snapshots &>/dev/null && ! restic init; then
+	if ! restic init; then
+		echo  "Failed to initialize repository: $RESTIC_REPOSITORY" >&2
+		exit 1
 	fi
 fi
 
-# print timestamp
-date +"%F %T %:z $prog end"
+# be nice
+command -v renice &>/dev/null && renice 10 -p $$
 
-# email failures
-if [[ -n "$mailto" && "$retval" != 0 ]]; then
-	subject="Restic Backup FAILURE - $hostname"
-	/usr/sbin/sendmail "$mailto" <<-EOF
-		Subject: $subject
-		$(<"$logfile")
-	EOF
-fi
+# do the thing
+retval=0
+case "$action" in
+	backup)
+		# take a backup
+		restic -v --exclude-file="$RESTICBACKUP_EXCLUDE_FILE" backup / || retval=$?
+	;;
+	prune)
+		# prune old backups
+		restic forget $RESTICBACKUP_PRUNE_ARGS || retval=$?
+	;;
+esac
+
+# run hooks
+for hook in "$hooks"/*; do
+	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
+done
+
+# exit with success/failure
 exit $retval
 

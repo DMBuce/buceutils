@@ -6,15 +6,19 @@
 
 ## resticbackup environment variables
 #RESTICBACKUP_EXCLUDE_FILE=/etc/resticbackup.d/exclude
-#RESTICBACKUP_MAILTO=
-#RESTICBACKUP_LOG_FILE=/var/log/resticbackup.log
 ## whether to check that the repository is a mount point
 #RESTICBACKUP_MOUNTED=1
-## whether to prune old backups
-#RESTICBACKUP_PRUNE=1
-## number of hourly/daily/weekly/monthly backups to keep when pruning
-#RESTICBACKUP_HOURLIES=12
-#RESTICBACKUP_DAILIES=7
-#RESTICBACKUP_WEEKLIES=4
-#RESTICBACKUP_MONTHLIES=3
+## arguments to pass to `restic forget` when pruning
+#RESTICBACKUP_PRUNE_ARGS="--prune --keep-hourly 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3"
+
+# check_mk hooks
+#
+# path to a check_mk spool file
+# if set, resticbackup will check the repo's integrity after each prune
+#CHECKMK_INTEGRITY_SPOOL=
+# path to a check_mk spool file
+# if set, resticbackup will check the number of snapshots in the past day after each backup
+#CHECKMK_SNAPSHOTS_SPOOL=
+#CHECKMK_SNAPSHOTS_WARN=10
+#CHECKMK_SNAPSHOTS_CRIT=0
 
