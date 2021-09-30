@@ -27,7 +27,7 @@ check_mk() {
 }
 
 # bail if we're not called after a backup
-if [[ "$action" != backup || -z ]]; then
+if [[ "$action" != backup ]]; then
 	exit
 fi
 
