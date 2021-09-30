@@ -34,10 +34,10 @@ fi
 # figure out the number of snapshots created in the past day
 yesterday="$(date -d -1day +%s)"
 snaps=0
-restic snapshots -H "$HOSTNAME" --json | jq -r .[].time | while read date; do
+while read date; do
 	snapdate="$(date -d "$date" +%s)"
 	(( snapdate > yesterday && snaps++ ))
-done
+done < <(restic snapshots -H "$HOSTNAME" --json | jq -r .[].time)
 
 # figure out what value to return
 retval=0
