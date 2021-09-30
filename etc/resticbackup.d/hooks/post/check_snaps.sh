@@ -6,10 +6,23 @@ retval="$2"
 
 # settings
 CHECKMK_SNAPSHOTS_SPOOL="${CHECKMK_SNAPSHOTS_SPOOL-/var/lib/check_mk_agent/spool/$((3*24*60*60))_check_restic_snapshots}"
-CHECKMK_SNAPSHOTS_WARN="${CHECKMK_SNAPSHOTS_WARN-10}"
-CHECKMK_SNAPSHOTS_CRIT="${CHECKMK_SNAPSHOTS_CRIT-6}"
+CHECKMK_SNAPSHOTS_THRESHOLDS="${CHECKMK_SNAPSHOTS_THRESHOLDS-1day:10:6}"
 service=RESTIC_SNAPSHOTS 
 spool="$CHECKMK_SNAPSHOTS_SPOOL"
+
+# check config
+IFS=: read period warn crit < "$CHECKMK_SNAPSHOTS_THRESHOLDS"
+begindate="$(date -d -"$period" +%s)"
+if [[ "$period" == *' '* || -z "$begindate" ]]; then
+	echo "Invalid period, defaulting to 1day: $CHECKMK_SNAPSHOTS_THRESHOLDS" >&2
+	begindate="$(date -d -"1day" +%s)"
+elif [[ ! "$warn" =~ ^[0-9]+$ ]]; then
+	echo "Invalid warning threshold, defaulting to 10: $CHECKMK_SNAPSHOTS_THRESHOLDS" >&2
+	warn=10
+elif [[ ! "$crit" =~ ^[0-9]+$ ]]; then
+	echo "Invalid critical threshold, defaulting to 6: $CHECKMK_SNAPSHOTS_THRESHOLDS" >&2
+	crit=6
+fi
 
 # send a message to check_mk's spool file
 check_mk() {
@@ -32,22 +45,21 @@ if [[ "$action" != backup ]]; then
 fi
 
 # figure out the number of snapshots created in the past day
-yesterday="$(date -d -1day +%s)"
 snaps=0
 while read date; do
 	snapdate="$(date -d "$date" +%s)"
-	(( snapdate > yesterday && snaps++ ))
+	(( snapdate > begindate && snaps++ ))
 done < <(restic snapshots -H "$HOSTNAME" --json | jq -r .[].time)
 
 # figure out what value to return
 retval=0
-if (( snaps <= CHECKMK_SNAPSHOTS_CRIT )); then
+if (( snaps <= crit )); then
 	retval=1
-elif (( snaps <= CHECKMK_SNAPSHOTS_WARN )); then
+elif (( snaps <= warn )); then
 	retval=2
 fi
 
 # print output
-perfdata="snapshots_1day=$snaps;$CHECKMK_SNAPSHOTS_WARN;$CHECKMK_SNAPSHOTS_CRIT"
-check_mk "$retval" "$service" "$perfdata" "$snaps snapshots taken in the past 24hrs"
+perfdata="snapshots_$period=$snaps;$warn;$crit"
+check_mk "$retval" "$service" "$perfdata" "$snaps snapshots taken in the past $period"
 
