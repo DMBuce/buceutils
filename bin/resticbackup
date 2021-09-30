@@ -35,16 +35,7 @@ fi
 # parse args
 action="$1"
 
-# logging
-if [[ "$RESTICBACKUP_LOG_FILE" != - ]]; then
-	[[ -t 1 ]] && echo "Logging to $RESTICBACKUP_LOG_FILE" >&2
-	mkdir -pv "$(dirname "$RESTICBACKUP_LOG_FILE")"
-	exec &>> "$RESTICBACKUP_LOG_FILE"
-fi
-
-# sanity checks
-#
-# check arguments
+# check args
 if [[ ! "$action" =~ ^(backup|prune)$ || $# != 1 ]]; then
 	echo "$usage" >&2
 	exit 1
@@ -63,8 +54,19 @@ elif pids="$(pidof -x "$prog")"; (( $(wc -w <<< "$pids") > 1 )); then
 elif [[ ! -r "$RESTICBACKUP_EXCLUDE_FILE" ]]; then
 	echo "Can't read file: $RESTICBACKUP_EXCLUDE_FILE" >&2
 	exit 1
+fi
+
+# start logging
+if [[ "$RESTICBACKUP_LOG_FILE" != - ]]; then
+	[[ -t 1 ]] && echo "Logging to $RESTICBACKUP_LOG_FILE" >&2
+	mkdir -pv "$(dirname "$RESTICBACKUP_LOG_FILE")"
+	exec &>> "$RESTICBACKUP_LOG_FILE"
+fi
+
+# sanity checks
+#
 # check mount point
-elif (( RESTICBACKUP_MOUNTED != 0 )) && ! mountpoint -q "$RESTIC_REPOSITORY"; then
+if (( RESTICBACKUP_MOUNTED != 0 )) && ! mountpoint -q "$RESTIC_REPOSITORY"; then
 	echo "Not a mount point: $RESTIC_REPOSITORY" >&2
 	exit 1
 # create repo if it doesn't exist
