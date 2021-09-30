@@ -2,5 +2,5 @@
 
 # print timestamp
 echo  "-----"
-date +"%F %T %:z resticbackup: start $action"
+date +"%F %T %:z resticbackup: start $1"
 

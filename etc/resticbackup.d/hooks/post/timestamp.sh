@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # print timestamp
-date +"%F %T %:z resticbackup: end $action"
+date +"%F %T %:z resticbackup: end $1"
 
