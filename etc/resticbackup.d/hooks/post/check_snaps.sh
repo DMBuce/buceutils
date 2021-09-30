@@ -5,8 +5,9 @@ action="$1"
 retval="$2"
 
 # settings
+CHECKMK_SNAPSHOTS_SPOOL="${CHECKMK_SNAPSHOTS_SPOOL-/var/lib/check_mk_agent/spool/$((3*24*60*60))_check_restic_snapshots}"
 CHECKMK_SNAPSHOTS_WARN="${CHECKMK_SNAPSHOTS_WARN-10}"
-CHECKMK_SNAPSHOTS_CRIT="${CHECKMK_SNAPSHOTS_CRIT-0}"
+CHECKMK_SNAPSHOTS_CRIT="${CHECKMK_SNAPSHOTS_CRIT-6}"
 service=RESTIC_SNAPSHOTS 
 spool="$CHECKMK_SNAPSHOTS_SPOOL"
 
@@ -26,8 +27,7 @@ check_mk() {
 }
 
 # bail if we're not called after a backup
-# or if snapshot monitoring isn't configured
-if [[ "$action" != backup || -z "$CHECKMK_SNAPSHOTS_SPOOL" ]]; then
+if [[ "$action" != backup || -z ]]; then
 	exit
 fi
 

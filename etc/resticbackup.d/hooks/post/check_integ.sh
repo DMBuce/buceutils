@@ -5,6 +5,7 @@ action="$1"
 retval="$2"
 
 # settings
+CHECKMK_INTEGRITY_SPOOL="${CHECKMK_INTEGRITY_SPOOL-/var/lib/check_mk_agent/spool/$((8*24*60*60))_check_restic_integrity}"
 service=RESTIC_INTEGRITY 
 spool="$CHECKMK_INTEGRITY_SPOOL"
 
@@ -24,8 +25,7 @@ check_mk() {
 }
 
 # bail if we're not called after a prune
-# or if integrity monitoring isn't configured
-if [[ "$action" != prune || -z "$CHECKMK_INTEGRITY_SPOOL" ]]; then
+if [[ "$action" != prune ]]; then
 	exit
 fi
 

@@ -1,8 +1,8 @@
 #!bash
 
 ## restic environment variables
-#RESTIC_PASSWORD_FILE='/etc/resticbackup.d/password'
-#RESTIC_REPOSITORY='/backup/restic'
+#RESTIC_PASSWORD_FILE=/etc/resticbackup.d/password
+#RESTIC_REPOSITORY=/backup/restic
 
 ## resticbackup environment variables
 #RESTICBACKUP_EXCLUDE_FILE=/etc/resticbackup.d/exclude
@@ -12,14 +12,12 @@
 ## arguments to pass to `restic forget` when pruning
 #RESTICBACKUP_PRUNE_ARGS="--prune --keep-hourly 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3"
 
-# check_mk hooks
+# check_mk hook options
 #
-# path to a check_mk spool file
-# if set, resticbackup will check the repo's integrity after each prune
-#CHECKMK_INTEGRITY_SPOOL=
-# path to a check_mk spool file
-# if set, resticbackup will check the number of snapshots in the past day after each backup
-#CHECKMK_SNAPSHOTS_SPOOL=
+# paths to check_mk spool files
+#CHECKMK_INTEGRITY_SPOOL=/var/lib/check_mk_agent/spool/$((8*24*60*60))_check_restic_integrity
+#CHECKMK_SNAPSHOTS_SPOOL=/var/lib/check_mk_agent/spool/$((3*24*60*60))_check_restic_snapshots
+# thresholds for check_snaps hook
 #CHECKMK_SNAPSHOTS_WARN=10
-#CHECKMK_SNAPSHOTS_CRIT=0
+#CHECKMK_SNAPSHOTS_CRIT=6
 
