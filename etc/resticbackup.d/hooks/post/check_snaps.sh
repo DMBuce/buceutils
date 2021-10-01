@@ -11,7 +11,7 @@ service=RESTIC_SNAPSHOTS
 spool="$CHECKMK_SNAPSHOTS_SPOOL"
 
 # check config
-IFS=: read period warn crit < "$CHECKMK_SNAPSHOTS_THRESHOLDS"
+IFS=: read period warn crit <<< "$CHECKMK_SNAPSHOTS_THRESHOLDS"
 begindate="$(date -d -"$period" +%s)"
 if [[ "$period" == *' '* || -z "$begindate" ]]; then
 	echo "Invalid period, defaulting to 1day: $CHECKMK_SNAPSHOTS_THRESHOLDS" >&2
