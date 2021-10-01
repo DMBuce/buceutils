@@ -79,8 +79,12 @@ elif ! restic snapshots &>/dev/null && ! restic init; then
 	fi
 fi
 
+# print timestamp
+echo "=========================="
+date +"%F %T %:z resticbackup: start $1"
+
 # be nice
-command -v renice &>/dev/null && renice 10 -p $$ >/dev/null
+command -v renice &>/dev/null && renice 10 -p $$
 
 # run hooks
 for hook in "$hooks"/*.pre; do
@@ -104,6 +108,9 @@ esac
 for hook in "$hooks"/*.post; do
 	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
 done
+
+# print timestamp
+date +"%F %T %:z $prog: end $action"
 
 # exit with success/failure
 exit $retval
