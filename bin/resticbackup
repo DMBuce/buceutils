@@ -88,7 +88,10 @@ command -v renice &>/dev/null && renice 10 -p $$
 
 # run hooks
 for hook in "$hooks"/*.pre; do
-	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
+	if [[ -x "$hook" ]]; then
+		echo "Running hook: $hook" >&2
+		"$hook" "$action" "$retval"
+	fi
 done
 
 # do the thing
@@ -106,7 +109,10 @@ esac
 
 # run hooks
 for hook in "$hooks"/*.post; do
-	[[ -x "$hook" ]] && "$hook" "$action" "$retval"
+	if [[ -x "$hook" ]]; then
+		echo "Running hook: $hook" >&2
+		"$hook" "$action" "$retval"
+	fi
 done
 
 # print timestamp
