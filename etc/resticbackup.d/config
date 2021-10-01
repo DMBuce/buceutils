@@ -5,7 +5,9 @@
 # see `man restic` for details
 #
 #RESTIC_PASSWORD_FILE=/etc/resticbackup.d/password
+#RESTIC_PASSWORD_COMMAND="gpg --quiet --decrypt /etc/resticbackup.d/password.gpg" 
 #RESTIC_REPOSITORY=/backup/restic
+#RESTIC_REPOSITORY_FILE=/etc/resticbackup.d/repo
 
 # file with paths/patterns to exclude from the backup
 #

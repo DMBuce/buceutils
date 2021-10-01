@@ -39,12 +39,15 @@ action="$1"
 if [[ ! "$action" =~ ^(backup|prune)$ || $# != 1 ]]; then
 	echo "$usage" >&2
 	exit 1
-# check environment variables
-elif [[ -z "$RESTIC_REPOSITORY" ]]; then
-	echo "Environment variable not set in $config: \$RESTIC_REPOSITORY" >&2
+# check repo environment variables
+elif [[ -z "$RESTIC_REPOSITORY" && -z "$RESTIC_REPOSITORY_FILE" ]]; then
+	echo "Repository not defined" >&2
+	echo "Set RESTIC_REPOSITORY or RESTIC_REPOSITORY_FILE in config: $config" >&2
 	exit 1
-elif [[ -z "$RESTIC_PASSWORD_FILE" ]]; then
-	echo "Environment variable not set in $config: \$RESTIC_PASSWORD_FILE" >&2
+# check passwd environment variables
+elif [[ -z "$RESTIC_PASSWORD_FILE" && -z "$RESTIC_PASSWORD_COMMAND" ]]; then
+	echo "Password not defined" >&2
+	echo "Set RESTIC_PASSWORD_FILE or RESTIC_PASSWORD_COMMAND in config: $config" >&2
 	exit 1
 # make sure another instance of this script isn't running
 elif pids="$(pidof -x "$prog")"; (( $(wc -w <<< "$pids") > 1 )); then
