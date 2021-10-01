@@ -50,7 +50,7 @@ echo "Snapshots within last $period:"
 while read date hostname; do
 	snapdate="$(date -d "$date" +%s)"
 	if (( snapdate > begindate )); then
-		snaps+=1
+		((snaps++))
 		date -d "$date" +"%F %T %:z   $hostname"
 	fi
 done < <(restic snapshots -H "$HOSTNAME" --json | jq -r '.[]|[.time,.hostname]|@tsv')
