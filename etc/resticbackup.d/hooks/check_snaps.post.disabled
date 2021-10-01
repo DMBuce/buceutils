@@ -65,5 +65,5 @@ fi
 
 # print output
 perfdata="snapshots_$period=$snaps;$warn;$crit"
-check_mk "$retval" "$service" "$perfdata" "$snaps snapshots taken in the past $period"
+check_mk "$retval" "$perfdata" "$snaps snapshots taken in the past $period"
 
