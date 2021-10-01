@@ -88,8 +88,10 @@ elif ! restic snapshots &>/dev/null && ! restic init; then
 fi
 
 # print timestamp
+timefmt="%F %T %:z "
+[[ "$RESTICBACKUP_LOG_FILE" == syslog ]] && timefmt=""
 echo "=========================="
-date +"%F %T %:z $prog: start $action"
+date +"$timefmt$prog: start $action"
 
 # be nice
 command -v renice &>/dev/null && renice 10 -p $$
@@ -124,7 +126,7 @@ for hook in "$hooks"/*.post; do
 done
 
 # print timestamp
-date +"%F %T %:z $prog: end $action"
+date +"$timefmt$prog: end $action"
 
 # exit with success/failure
 exit $retval
