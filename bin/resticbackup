@@ -57,7 +57,12 @@ elif [[ ! -r "$RESTICBACKUP_EXCLUDE_FILE" ]]; then
 fi
 
 # start logging
-if [[ "$RESTICBACKUP_LOG_FILE" != - ]]; then
+if [[ "$RESTICBACKUP_LOG_FILE" == - ]]; then
+	: # do nothing
+elif [[ "$RESTICBACKUP_LOG_FILE" == syslog ]]; then
+	[[ -t 1 ]] && echo "Logging to $RESTICBACKUP_LOG_FILE" >&2
+	exec &> >(logger -e -t "$prog" --id=$$ -p local0.info)
+else
 	[[ -t 1 ]] && echo "Logging to $RESTICBACKUP_LOG_FILE" >&2
 	mkdir -pv "$(dirname "$RESTICBACKUP_LOG_FILE")"
 	exec &>> "$RESTICBACKUP_LOG_FILE"
