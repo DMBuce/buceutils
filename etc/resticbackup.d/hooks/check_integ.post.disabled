@@ -34,7 +34,7 @@ fi
 rm -rf /tmp/restic-check-cache-*
 
 # check repo for errors
-if restic check | grep -q 'no errors were found'; then
+if restic check | { tee /dev/stderr | grep -q 'no errors were found'; } 2>&1; then
 	check_mk 0 - "No errors found in integrity check"
 else
 	check_mk 1 - "Integrity check failed"
