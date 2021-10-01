@@ -26,9 +26,9 @@ usage="Syntax: $prog <backup|prune>
 "
 
 # set default behavior when called with no arguments
-if [[ $# == 0 && "$prog" == restic_backup ]]; then
+if [[ $# == 0 && "${0##*/}" == restic_backup ]]; then
 	set -- backup
-elif [[ $# == 0 && "$prog" == restic_prune ]]; then
+elif [[ $# == 0 && "${0##*/}" == restic_prune ]]; then
 	set -- prune
 fi
 
