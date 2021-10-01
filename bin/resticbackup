@@ -90,9 +90,7 @@ command -v renice &>/dev/null && renice 10 -p $$
 for hook in "$hooks"/*.pre; do
 	if [[ -x "$hook" ]]; then
 		echo "Running hook: $hook" >&2
-		"$hook" "$action" "$retval" \
-			>  >(sed '1s/^/==> /; 2,$s/^/    /') \
-			2> >(sed '1s/^/==> /; 2,$s/^/    /' >&2)
+		"$hook" "$action" "$retval" 2>&1 | sed '1s/^/==> /; 2,$s/^/    /'
 	fi
 done
 
@@ -113,9 +111,7 @@ esac
 for hook in "$hooks"/*.post; do
 	if [[ -x "$hook" ]]; then
 		echo "Running hook: $hook" >&2
-		"$hook" "$action" "$retval" \
-			>  >(sed '1s/^/==> /; 2,$s/^/    /') \
-			2> >(sed '1s/^/==> /; 2,$s/^/    /' >&2)
+		"$hook" "$action" "$retval" 2>&1 | sed '1s/^/==> /; 2,$s/^/    /'
 	fi
 done
 
