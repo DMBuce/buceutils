@@ -81,7 +81,7 @@ fi
 
 # print timestamp
 echo "=========================="
-date +"%F %T %:z resticbackup: start $1"
+date +"%F %T %:z $prog: start $action"
 
 # be nice
 command -v renice &>/dev/null && renice 10 -p $$
