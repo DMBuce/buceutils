@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Temp qw/ tempfile /;
+use File::Copy qw/ move /;
+
+# define some vars
+my $prog = (split(/\//, $0))[-1];
+my $usage = "Syntax: $prog <src> <dest>\n";
+
+# parse args
+my ($src, $dest) = @ARGV;
+
+# check args
+if ($src eq "" || $dest eq "") {
+	print STDERR "$usage\n";
+	exit 1;
+}
+
+# open input file
+open(my $in, "<$src") or die $!;
+
+# open output file
+my ($out, $outfile);
+if ($dest eq "-") {
+	$out = *STDOUT;
+} else {
+	# create temp file
+	($out, $outfile) = tempfile("$prog.XXXXXXXXXX", TMPDIR=>1);
+	#print STDERR "$outfile\n";
+	END {
+		unlink $outfile if $dest ne "-";
+	}
+}
+
+# iterate through each line of input file
+while (my $line = <$in>) {
+	# iterate through {{foo}} parameters
+	while ($line =~ /\{\{(.+?)}}/g) {
+		# replace {{foo}} with $foo or ./foo
+		my $match = $1;
+		my $replacement;
+		if (defined $ENV{$match}) {
+			$replacement = $ENV{$match};
+		} else {
+    		open(my $fh, '<', $match) or die "$!: $match";
+			{
+				local $/;
+				$replacement = <$fh>;
+				$replacement =~ s/\R$//;
+			}
+			close($fh);
+		}
+		$line =~ s/\{\{$match}}/$replacement/;
+	}
+
+	# write line to output file
+	print $out "$line";
+}
+
+# close files
+close $out;
+close $in;
+
+# rename temp file
+move $outfile, $dest if $dest ne "-";
+

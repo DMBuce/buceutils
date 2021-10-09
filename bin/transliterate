@@ -1,0 +1,499 @@
+#!/usr/bin/env python
+
+# abcdefghijklmnopqrstuvwxyz
+# ABCDEFGHIJKLMNOPQRSTUVWXYZ  
+# 0123456789  
+# buttons: 10 11 12 13 14 15 16 17 18 19 20
+# keys: ic pa sa ab wc IC PA SA AB WC
+# circle: cd CD wz WZ Wz
+# 10 11 12 13 14 15 16 17 18 19 20
+# 21 22 23 24 25 26 27 28 29 30
+# 31 32 33 34 35 36 37 38 39 40
+# 41 42 43 44 45 46 47 48 49 50
+# square:
+# hv mv sd ss wc cl id ng ok vs hc ppv new sos hdr shv uhd vod cool free
+# HV MV SD SS WC CL ID NG OK VS HC PPV NEW SOS HDR SHV UHD VOD COOL FREE
+# 2k 4k 3d 8k 60p 120p 2K 4K 3D 8K 60P 5.1 7.1 22.2 120P
+# futhark: -,;:.+ ce ci cy ch qu x y CE CI CY CH QU X Y th ae ng TH AE NG
+# ogham: ng oi ia ae NG OI IA AE
+
+import os
+import sys
+import random
+
+from transliterate import get_available_language_codes, translit
+from transliterate.base import TranslitLanguagePack, registry
+from transliterate.discover import autodiscover
+
+# validate args
+prog = os.path.basename(sys.argv[0])
+usage = """\
+Syntax: %s <lang> [file]
+        %s ls|list
+"""
+if "--help" in sys.argv or len(sys.argv) < 2:
+    print(usage)
+    sys.exit()
+
+autodiscover()
+
+class ButtonLanguagePack(TranslitLanguagePack):
+    language_code = "buttons"
+    language_name = "Button"
+    mapping = (
+        u"1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        u"❶❷❸❹❺❻❼❽❾🄌🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩",
+    )
+    pre_processor_mapping = {
+        u"11": u"⓫",
+        u"12": u"⓬",
+        u"13": u"⓭",
+        u"14": u"⓮",
+        u"15": u"⓯",
+        u"16": u"⓰",
+        u"17": u"⓱",
+        u"18": u"⓲",
+        u"19": u"⓳",
+        u"20": u"⓴",
+        u"10": u"➓",
+
+    }
+
+class KeyLanguagePack(TranslitLanguagePack):
+    language_code = "keys"
+    language_name = "Key"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        u"🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉",
+    )
+    pre_processor_mapping = {
+        u"0": "0️⃣",
+        u"1": "1️⃣",
+        u"2": "2️⃣",
+        u"3": "3️⃣",
+        u"4": "4️⃣",
+        u"5": "5️⃣",
+        u"6": "6️⃣",
+        u"7": "7️⃣",
+        u"8": "8️⃣",
+        u"9": "9️⃣",
+        u"ic" : u"🆋",
+        u"pa" : u"🆌",
+        u"sa" : u"🆍",
+        u"ab" : u"🆎",
+        u"wc" : u"🆏",
+        u"cl"  : u"🆑",
+        u"id"  : u"🆔",
+        u"ng"  : u"🆖",
+        u"ok"  : u"🆗",
+        u"vs"  : u"🆚",
+        u"new" : u"🆕",
+        u"sos" : u"🆘",
+        u"cool": u"🆒",
+        u"free": u"🆓",
+        u"IC" : u"🆋",
+        u"PA" : u"🆌",
+        u"SA" : u"🆍",
+        u"AB" : u"🆎",
+        u"WC" : u"🆏",
+        u"CL"  : u"🆑",
+        u"ID"  : u"🆔",
+        u"NG"  : u"🆖",
+        u"OK"  : u"🆗",
+        u"VS"  : u"🆚",
+        u"NEW" : u"🆕",
+        u"SOS" : u"🆘",
+        u"COOL": u"🆒",
+        u"FREE": u"🆓",
+    }
+
+class CircleLanguagePack(TranslitLanguagePack):
+    language_code = "circle"
+    language_name = "Circle"
+    mapping = (
+        u"1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        u"①②③④⑤⑥⑦⑧⑨⓪ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
+    )
+    pre_processor_mapping = {
+        u"CD"  : u"🄭",
+        u"Wz"  : u"🄮",
+        u"11"  : u"⑪",
+        u"12"  : u"⑫",
+        u"13"  : u"⑬",
+        u"14"  : u"⑭",
+        u"15"  : u"⑮",
+        u"16"  : u"⑯",
+        u"17"  : u"⑰",
+        u"18"  : u"⑱",
+        u"19"  : u"⑲",
+        u"20"  : u"⑳",
+        u"10"  : u"⓾",
+        u"21"  : u"㉑",
+        u"22"  : u"㉒",
+        u"23"  : u"㉓",
+        u"24"  : u"㉔",
+        u"25"  : u"㉕",
+        u"26"  : u"㉖",
+        u"27"  : u"㉗",
+        u"28"  : u"㉘",
+        u"29"  : u"㉙",
+        u"30"  : u"㉚",
+        u"31"  : u"㉛",
+        u"32"  : u"㉜",
+        u"33"  : u"㉝",
+        u"34"  : u"㉞",
+        u"35"  : u"㉟",
+        u"36"  : u"㊱",
+        u"37"  : u"㊲",
+        u"38"  : u"㊳",
+        u"39"  : u"㊴",
+        u"40"  : u"㊵",
+        u"41"  : u"㊶",
+        u"42"  : u"㊷",
+        u"43"  : u"㊸",
+        u"44"  : u"㊹",
+        u"45"  : u"㊺",
+        u"46"  : u"㊻",
+        u"47"  : u"㊼",
+        u"48"  : u"㊽",
+        u"49"  : u"㊾",
+        u"50"  : u"㊿",
+    }
+
+class SquareLanguagePack(TranslitLanguagePack):
+    language_code = "square"
+    language_name = "Square"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        u"🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
+    )
+    pre_processor_mapping = {
+        u"shv" : u"🆪",
+        u"hv"  : u"🅊",
+        u"mv"  : u"🅋",
+        u"sd"  : u"🅌",
+        u"ss"  : u"🅍",
+        u"wc"  : u"🅏",
+        u"hc"  : u"🆦",
+        u"ppv" : u"🅎",
+        u"hdr" : u"🆧",
+        u"uhd" : u"🆫",
+        u"vod" : u"🆬",
+        u"2k"  : u"🆝",
+        u"4k"  : u"🆞",
+        u"3d"  : u"🆛",
+        u"8k"  : u"🆟",
+        u"60p" : u"🆣",
+        u"120p": u"🆤",
+        u"SHV" : u"🆧",
+        u"HV"  : u"🅊",
+        u"MV"  : u"🅋",
+        u"SD"  : u"🅌",
+        u"SS"  : u"🅍",
+        u"WC"  : u"🅏",
+        u"HC"  : u"🆦",
+        u"PPV" : u"🅎",
+        u"HDR" : u"🆧",
+        u"UHD" : u"🆫",
+        u"VOD" : u"🆬",
+        u"2K"  : u"🆝",
+        u"4K"  : u"🆞",
+        u"3D"  : u"🆛",
+        u"8K"  : u"🆟",
+        u"60P" : u"🆣",
+        u"5.1" : u"🆠",
+        u"7.1" : u"🆡",
+        u"22.2": u"🆢",
+        u"120P": u"🆤",
+        u"0": "0️⃣",
+        u"1": "1️⃣",
+        u"2": "2️⃣",
+        u"3": "3️⃣",
+        u"4": "4️⃣",
+        u"5": "5️⃣",
+        u"6": "6️⃣",
+        u"7": "7️⃣",
+        u"8": "8️⃣",
+        u"9": "9️⃣",
+    }
+
+class FutharkLanguagePack(TranslitLanguagePack):
+    language_code = "futhark"
+    language_name = "Elder Futhark"
+    mapping = (
+        u"fvuarkcqgwhnijpzstbemldoFVUARKCQGWHNIJPZSTBEMLDO.,:;-+0",
+        u"ᚠᚠᚢᚨᚱᚲᚲᚲᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛞᛟᚠᚠᚢᚨᚱᚲᚲᚲᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛞᛟ᛫᛫᛬᛬᛭᛭᛫",
+
+    )
+    pre_processor_mapping = {
+        u"ce": u"ᛊᛖ",
+        u"ci": u"ᛊᛁ",
+        u"cy": u"ᛊᛇ",
+        u"ch": u"ᛃ",
+        u"qu": u"ᚲᚹ",
+        u"x": u"ᚲᛊ",
+        u"y": u"ᛇ",
+        u"CE": u"ᛊᛖ",
+        u"CI": u"ᛊᛁ",
+        u"CY": u"ᛊᛇ",
+        u"CH": u"ᛃ",
+        u"QU": u"ᚲᚹ",
+        u"X": u"ᚲᛊ",
+        u"Y": u"ᛇ",
+        u"th": u"ᚦ",
+        u"ae": u"ᛇ",
+        u"ng": u"ᛜ",
+        u"TH": u"ᚦ",
+        u"AE": u"ᛇ",
+        u"NG": u"ᛜ",
+        u"1": "ᛁ̵",
+        u"2": "ᛁ̿",
+        u"3": "ᛁ̵̿",
+        u"4": "ᛁ̳̿",
+        u"5": "ᛁ͗",
+        u"6": "ᛁ̵͗",
+        u"7": "ᚽ",
+        u"8": "ᚿ",
+        u"9": "ᛁ",
+    }
+
+
+class OghamLanguagePack(TranslitLanguagePack):
+    language_code = "ogham"
+    language_name = "Ogham"
+    mapping = (
+        u"0123456789 bvlfsnhdtckqmgzraoueiywpBVLFSNHDTCKQMGZRAOUEIYWP",
+        u" ᚁᚂᚃᚄᚅᚆᚇᚈᚉ ᚁᚁᚂᚃᚄᚅᚆᚇᚈᚉᚉᚊᚋᚌᚎᚏᚐᚑᚒᚓᚔᚕᚗᚚᚁᚁᚂᚃᚄᚅᚆᚇᚈᚉᚉᚊᚋᚌᚎᚏᚐᚑᚒᚓᚔᚕᚗᚚ",
+    )
+    pre_processor_mapping = {
+        u"j": u"ᚉᚆ",
+        u"x": u"ᚉᚄ",
+        u"ng": u"ᚍ",
+        u"oi": u"ᚖ",
+        u"ia": u"ᚘ",
+        u"ae": u"ᚙ",
+        u"J": u"ᚉᚆ",
+        u"X": u"ᚉᚄ",
+        u"NG": u"ᚍ",
+        u"OI": u"ᚖ",
+        u"IA": u"ᚘ",
+        u"AE": u"ᚙ",
+    }
+
+class GothicLanguagePack(TranslitLanguagePack):
+    language_code = "gothic"
+    language_name = "Gothic"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        u"𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ0123456789",
+    )
+    pre_processor_mapping = {
+    }
+
+class DoubleStruckLanguagePack(TranslitLanguagePack):
+    language_code = "doublestruck"
+    language_name = "DoubleStruck"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        u"𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡",
+    )
+    pre_processor_mapping = {
+    }
+
+class ScriptLanguagePack(TranslitLanguagePack):
+    language_code = "script"
+    language_name = "Script"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        u"𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵0123456789",
+    )
+    pre_processor_mapping = {
+    }
+
+class StrikethroughLanguagePack(TranslitLanguagePack):
+    language_code = "strike"
+    language_name = "Strikethrough"
+    mapping = (
+        u"",
+        u"",
+    )
+    pre_processor_mapping = {
+        u"a": u"𝖺̶",
+        u"b": u"𝖻̶",
+        u"c": u"𝖼̶",
+        u"d": u"𝖽̶",
+        u"e": u"𝖾̶",
+        u"f": u"𝖿̶",
+        u"g": u"𝗀̶",
+        u"h": u"𝗁̶",
+        u"i": u"𝗂̶",
+        u"j": u"𝗃̶",
+        u"k": u"𝗄̶",
+        u"l": u"𝗅̶",
+        u"m": u"𝗆̶",
+        u"n": u"𝗇̶",
+        u"o": u"𝗈̶",
+        u"p": u"𝗉̶",
+        u"q": u"𝗊̶",
+        u"r": u"𝗋̶",
+        u"s": u"𝗌̶",
+        u"t": u"𝗍̶",
+        u"u": u"𝗎̶",
+        u"v": u"𝗏̶",
+        u"w": u"𝗐̶",
+        u"x": u"𝗑̶",
+        u"y": u"𝗒̶",
+        u"z": u"𝗓̶",
+        u"A": u"𝖠̶",
+        u"B": u"𝖡̶",
+        u"C": u"𝖢̶",
+        u"D": u"𝖣̶",
+        u"E": u"𝖤̶",
+        u"F": u"𝖥̶",
+        u"G": u"𝖦̶",
+        u"H": u"𝖧̶",
+        u"I": u"𝖨̶",
+        u"J": u"𝖩̶",
+        u"K": u"𝖪̶",
+        u"L": u"𝖫̶",
+        u"M": u"𝖬̶",
+        u"N": u"𝖭̶",
+        u"O": u"𝖮̶",
+        u"P": u"𝖯̶",
+        u"Q": u"𝖰̶",
+        u"R": u"𝖱̶",
+        u"S": u"𝖲̶",
+        u"T": u"𝖳̶",
+        u"U": u"𝖴̶",
+        u"V": u"𝖵̶",
+        u"W": u"𝖶̶",
+        u"X": u"𝖷̶",
+        u"Y": u"𝖸̶",
+        u"Z": u"𝖹̶",
+        u"0": u"𝟢̶",
+        u"1": u"𝟣̶",
+        u"2": u"𝟤̶",
+        u"3": u"𝟥̶",
+        u"4": u"𝟦̶",
+        u"5": u"𝟧̶",
+        u"6": u"𝟨̶",
+        u"7": u"𝟩̶",
+        u"8": u"𝟪̶",
+        u"9": u"𝟫̶",
+    }
+
+class UpsideDownLanguagePack(TranslitLanguagePack):
+    language_code = "upside-down"
+    language_name = "Upside Down"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        u"ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz∀𐐒ƆᗡƎℲפHIſꓘ˥WNOԀỎᴚS┴∩ΛMX⅄Z0123456789",
+    )
+    pre_processor_mapping = {
+    }
+
+class CensoredLanguagePack(TranslitLanguagePack):
+    language_code = "censored"
+    language_name = "Censored"
+    mapping = (
+        u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        u"██████████████████████████████████████████████████████████████",
+    )
+    pre_processor_mapping = {
+    }
+
+registry.register(CensoredLanguagePack)
+registry.register(UpsideDownLanguagePack)
+registry.register(StrikethroughLanguagePack)
+registry.register(DoubleStruckLanguagePack)
+registry.register(ScriptLanguagePack)
+registry.register(GothicLanguagePack)
+registry.register(OghamLanguagePack)
+registry.register(FutharkLanguagePack)
+registry.register(SquareLanguagePack)
+registry.register(CircleLanguagePack)
+registry.register(KeyLanguagePack)
+registry.register(ButtonLanguagePack)
+
+class RansomLanguagePack(TranslitLanguagePack):
+    language_code = "ransom"
+    language_name = "Ransom"
+    mapping = (
+        u"AHMSVZahmsvz",
+        u"🔼♓♏💲♈💤🔼♓♏💲♈💤",
+    )
+    pre_processor_mapping = {
+        "c": "☪️",
+        "o": "🌀",
+        "r": "®️",
+        "t": "✝️",
+        "u": "⛎",
+        "x": "❌",
+        "C": "☪️",
+        "O": "🌀",
+        "R": "®️",
+        "T": "✝️",
+        "U": "⛎",
+        "X": "❌",
+        "!": "❗",
+    }
+
+registry.register(RansomLanguagePack)
+
+# parse args
+langcode = sys.argv[1]
+if sys.argv[1] == "list" or sys.argv[1] == "ls":
+    for lang in get_available_language_codes():
+        print(lang)
+
+    sys.exit()
+elif len(sys.argv) > 2:
+    infile = open(sys.argv[2])
+else:
+    infile = sys.stdin
+
+# https://stackoverflow.com/questions/1630320/what-is-the-pythonic-way-to-detect-the-last-element-in-a-for-loop
+def lookahead(iterable):
+    """Pass through all values from the given iterable, augmented by the
+    information if there are more values to come after the current one
+    (True), or if it is the last value (False).
+    """
+    # Get an iterator and pull the first value.
+    it = iter(iterable)
+    try:
+        last = next(it)
+    except StopIteration:
+        sys.exit()
+    # Run the iterator to exhaustion (starting from the second value).
+    for val in it:
+        # Report the *previous* value (more to come).
+        yield last, True
+        last = val
+    # Report the last value.
+    yield last, False
+
+# do the thing
+ransoms = ["square", "circle", "keys", "buttons", "script", "doublestruck"]
+ransom = random.choice(ransoms)
+if sys.argv[1] == "ogham": print("᚛", end="")
+for line, hasmore in lookahead(infile):
+    line = line.rstrip('\n')
+    if line == "": continue
+    end = "\n" if hasmore else ""
+    if sys.argv[1] == "upside-down": line = line[::-1]
+    if sys.argv[1] != "ransom":
+        tr = translit(line, langcode)
+    else:
+        tr = u""
+        for c in line:
+            ransom = random.choice( list(set(ransoms) - set([ransom])) )
+            C = random.choice( [c.upper(), c.lower()] )
+            if C == translit(C, langcode):
+                tr += translit(C, ransom)
+            else:
+                tr += translit(C, langcode)
+
+    print(tr, end=end)
+
+print("᚜" if sys.argv[1] == "ogham" else "")
+
