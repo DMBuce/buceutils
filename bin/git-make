@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# find git root
+gitroot="$(git rev-parse --show-toplevel)" || exit $?
+
+# run make
+cd "$gitroot" && exec make "$@"
+
