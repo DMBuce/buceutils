@@ -6,7 +6,16 @@ user="$(git config github.user)"
 pushfrom="$(git config github.push.from)"
 workdir="$(git config github.push.workdir)"
 repos=( "$@" )
-(( $# == 0 )) && repos=( $(git config github.push.repos) )
+
+# set default repos
+if [[ $# == 0 ]]; then
+	gitroot="$(git rev-parse --show-toplevel 2>/dev/null)"
+	if [[ -n "$gitroot" ]]; then
+		repos=( "$(basename "${gitroot%.git}")" )
+	else
+		repos=( $(git config github.push.repos) )
+	fi
+fi
 
 # run on a different host if necessary
 if [[ -n "$pushfrom" ]]; then
