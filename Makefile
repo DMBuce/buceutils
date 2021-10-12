@@ -71,10 +71,4 @@ $(DESTDIR)$(bindir)/%: bin/%
 $(DESTDIR)$(sysconfdir)/%: etc/%
 	$(INSTALL_DATA) $< $@
 
-$(DESTDIR)$(sysconfdir)/resticbackup.d/hooks/%: etc/resticbackup.d/hooks/%
-	$(INSTALL_PROGRAM) $< $@
-
-$(DESTDIR)$(sysconfdir)/resticbackup.d/password: etc/resticbackup.d/password
-	$(INSTALL) -m 600 $< $@
-
 # vim: set ft=make:
