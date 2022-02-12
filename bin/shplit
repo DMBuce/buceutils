@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# generate session id
+shplit=shplit_$$
+
+# check arguments
+if [[ -z "$1" || -z "$2" || "$*" == *--help* ]]; then
+	echo "Usage: ${0##*/} <host1> <host2> [host3] [...]
+
+    Launch an ssh session for each <host> in a tiled, synchronized tmux pane.
+"
+	exit
+fi
+
+# figure out window splits
+cmds=(new -s $shplit \;)
+for i in "${@:2}"; do
+	cmds+=(split-window -h \;)
+	cmds+=(select-layout tiled \;)
+done
+
+# figure out commands to use
+i=0
+for arg in "$@"; do
+	cmds+=(send-keys -t $shplit:0.$i "ssh $arg" C-m \;)
+	(( i++ ))
+done
+cmds+=(select-pane -t 0 \;)
+cmds+=(setw synchronize-panes \;)
+
+# start new session
+tmux "${cmds[@]}"
+
