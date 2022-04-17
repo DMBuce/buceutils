@@ -10,20 +10,21 @@ Each script in bin/ can be installed separately,
 and therefore have separate requirements detailed below.
 They all require GNU coreutils.
 
-* afraiddns: curl
+* afraiddns: sed, curl
+* ajp-proxies: sed, curl
 * csv2xls: perl, Spreadsheet::WriteExcel
 * diceware: python
-* extract: tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
-* git-check: git, sed
-* git-date: git
-* git-proj: git, openssh
+* extract: sed, tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
 * gob: none
 * hrsleft: python
 * mtg2html: perl
 * randarg: none
-* resticbackup: restic
+* shplit: tmux
 * sprunge: curl
 * sshdiff: openssh, diffutils
+* template: perl
+* timestamp: none
+* transliterate: python-transliterate
 * uniqaddr: perl, Net::CIDR::Lite
 * vol: alsa-utils
 * wscrot: xorg-xrandr, awk, imagemagick, xclip
