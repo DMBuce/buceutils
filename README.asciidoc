@@ -18,15 +18,12 @@ They all require GNU coreutils.
 * gob: none
 * hrsleft: python
 * mtg2html: perl
-* randarg: none
 * shplit: tmux
 * sprunge: curl
 * sshdiff: openssh, diffutils
 * template: perl
-* timestamp: none
 * transliterate: python-transliterate
 * uniqaddr: perl, Net::CIDR::Lite
-* vol: alsa-utils
 * wscrot: xorg-xrandr, awk, imagemagick, xclip
 
 Installation
