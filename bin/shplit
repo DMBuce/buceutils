@@ -13,7 +13,7 @@ if [[ -z "$1" || -z "$2" || "$*" == *--help* ]]; then
 fi
 
 # figure out window splits
-cmds=(new -s $shplit \;)
+cmds=(set -g base-index 0 \; new -s $shplit \;)
 for i in "${@:2}"; do
 	cmds+=(split-window -h \;)
 	cmds+=(select-layout tiled \;)
