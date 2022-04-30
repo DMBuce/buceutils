@@ -14,7 +14,7 @@ They all require GNU coreutils.
 * ajp-proxies: sed, curl
 * csv2xls: perl, Spreadsheet::WriteExcel
 * diceware: python
-* extract: sed, tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
+* extract: perl, tar, p7zip, gzip, bzip2, unrar, xz, unzip, jdk, rpm2cpio, and/or cabextract, depending on usage
 * gob: none
 * hrsleft: python
 * mtg2html: perl

@@ -6,20 +6,12 @@
 retval=0
 prog="${0##*/}"
 
-extensions() {
-	sed -rn '/\*\..*\)/ {
-		s/^[^*]*\*\.|\).*$//g
-		s/\|(\*\.)/\n/
-		p
-	}' "$0"
-}
-
 usage() {
 	echo "Usage: $prog file1 [ file2 ... ]
 
     Extract an archive.
 
-    Supports $(echo $(extensions))
+    Supports$(perl -ne 'print " $1" while (/\*\.(.*?)[|\)]/g)' "$0")
 "
 }
 
