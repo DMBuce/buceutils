@@ -32,7 +32,7 @@ Syntax: %s <lang> [file]
         %s ls|list
 """
 if "--help" in sys.argv or len(sys.argv) < 2:
-    print(usage)
+    print(usage%(prog,prog))
     sys.exit()
 
 autodiscover()
