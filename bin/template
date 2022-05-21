@@ -8,7 +8,7 @@ use File::Copy qw/ move /;
 
 # define some vars
 my $prog = (split(/\//, $0))[-1];
-my $usage = "Syntax: $prog <src> <dest>\n";
+my $usage = "Usage: $prog <src> <dest>\n";
 
 # parse args
 my ($src, $dest) = @ARGV;

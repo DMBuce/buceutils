@@ -28,7 +28,7 @@ from transliterate.discover import autodiscover
 # validate args
 prog = os.path.basename(sys.argv[0])
 usage = """\
-Syntax: %s <lang> [file]
+Usage: %s <lang> [file]
         %s ls|list
 """
 if "--help" in sys.argv or len(sys.argv) < 2:
