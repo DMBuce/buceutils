@@ -4,10 +4,11 @@ case "$TERM" in
 	xterm*)
 		export TERM=xterm-256color
 	;;
-	linux|screen*|rxvt*)
+	linux|screen*|tmux*|rxvt*)
 		# do nothing
 	;;
 	*)
+		prompt-command() { :; }
 		echo Not enabling colors for TERM = $TERM >&2
 		return
 	;;
@@ -48,6 +49,6 @@ else
 		end_color='\[\e[0m\]'
 		export PS1="${face} ${prompt_color}${me}@${host}${end_color}:${dir}\\$ "
 	}
-	export PROMPT_COMMAND="prompt-command"
+	export PROMPT_COMMAND="type -t prompt-command >/dev/null && prompt-command"
 fi
 
