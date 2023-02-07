@@ -49,6 +49,7 @@ else
 		end_color='\[\e[0m\]'
 		export PS1="${face} ${prompt_color}${me}@${host}${end_color}:${dir}\\$ "
 	}
+	unset PROMPT_COMMAND
 	export PROMPT_COMMAND="prompt-command"
 fi
 
